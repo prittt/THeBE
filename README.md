@@ -1,2 +1,2 @@
 # THeBE
-A THinning BEnchmark
+The THinning BEnchmark
