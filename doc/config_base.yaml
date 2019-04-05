@@ -1,0 +1,52 @@
+%YAML:1.2
+---
+##########################################
+# This is the THeBE configuration file #
+##########################################
+
+# -------------------------------------------------------------------------------------
+# Tests to perform and their number of repetitions
+# -------------------------------------------------------------------------------------
+
+# Kind of tests to execute
+perform: 
+  average:            true
+  average_with_steps: false
+
+# Number of tests repetitions 
+tests_number: 
+  average:            10
+  average_with_steps: 10
+
+# -------------------------------------------------------------------------------------
+# List of thinning algorithms to test
+# -------------------------------------------------------------------------------------
+
+algorithms: 
+  - ZHANGSUEN_DRAG
+
+# -------------------------------------------------------------------------------------
+# Datasets to use for each test
+# -------------------------------------------------------------------------------------
+
+# List of datasets on which "Average Runtime Tests" shall be run
+average_datasets: ["fingerprints", "tobacco800", "xdocs"]
+
+# List of datasets on which "Average Runtime Tests With Steps" shall be run
+average_datasets_with_steps: ["fingerprints", "tobacco800", "xdocs"]
+
+# -------------------------------------------------------------------------------------
+# Additional utilities
+# -------------------------------------------------------------------------------------
+
+# Directory for input/output paths
+paths: {input: "${THEBE_INPUT_DATASET_PATH}", output: "${THEBE_OUTPUT_RESULTS_PATH}"}
+
+# Save the results of each run test
+save_middle_tests: {average: false, average_with_steps: false, density: false, granularity: false}
+
+os: "${THEBE_OS}"
+
+##########################################
+# This is the THeBE configuration file #
+##########################################
