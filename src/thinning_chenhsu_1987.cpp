@@ -1,7 +1,7 @@
 #include "thinning_chenhsu_1987.h"
 
 REGISTER_THINNING(ChenHsu);
-REGISTER_THINNING(ChenHsu_LUT);
+REGISTER_THINNING(ChenHsuLUT);
 
 #define BLOCK_TO_P						\
     const uchar p2 = (block >> 1) & 1;  \
@@ -95,9 +95,9 @@ void ChenHsu::PerformThinning()
     img_out_ *= 255;
 }
 
-inline bool ChenHsu_LUT::should_remove_0(uint16_t block)
+inline bool ChenHsuLUT::should_remove_0(uint16_t block)
 {
-    static bool ChenHsu_LUT0[512] = {
+    static bool ChenHsuLUT0[512] = {
     0,0,0,1,0,0,1,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,1,1,0,1,0,1,0,0,0,1,
     0,0,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,0,1,1,0,0,0,0,0,0,0,1,
     0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,
@@ -115,12 +115,12 @@ inline bool ChenHsu_LUT::should_remove_0(uint16_t block)
     1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,
     1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
     };
-    return ChenHsu_LUT0[block];
+    return ChenHsuLUT0[block];
 }
 
-inline bool ChenHsu_LUT::should_remove_1(uint16_t block)
+inline bool ChenHsuLUT::should_remove_1(uint16_t block)
 {
-    static bool ChenHsu_LUT1[512] = {
+    static bool ChenHsuLUT1[512] = {
     0,0,0,1,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,1,0,0,1,1,0,1,1,1,0,0,1,1,
     0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,
@@ -138,10 +138,10 @@ inline bool ChenHsu_LUT::should_remove_1(uint16_t block)
     1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,
     1,0,0,0,1,0,1,1,1,1,0,0,1,1,0,0,1,0,0,0,1,0,1,1,1,1,0,0,1,1,0,0,
     };
-    return ChenHsu_LUT1[block];
+    return ChenHsuLUT1[block];
 }
 
-void ChenHsu_LUT::PerformThinning()
+void ChenHsuLUT::PerformThinning()
 {
     cv::Mat1b img_input = img_.clone();
     img_out_ = cv::Mat1b(img_.size());

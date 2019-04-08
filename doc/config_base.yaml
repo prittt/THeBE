@@ -21,7 +21,7 @@ correctness_tests:
   
 # Number of tests repetitions 
 tests_number: 
-  average:            10
+  average:            1
   average_with_steps: 10
 
 # -------------------------------------------------------------------------------------
@@ -29,16 +29,24 @@ tests_number:
 # -------------------------------------------------------------------------------------
 
 algorithms: 
-  - ZS
-  - ZS_PTRS
-  - ZS_LUT
-  - ZS_DRAG
+  - ZhangSuen
+  - ZhangSuenNoPtrs
+  - ZhangSuenLUT
+  - ZhangSuenDrag
+  - GuoHall
+  - GuoHallLUT
+  - ChenHsu
+  - ChenHsuLUT
 
 check_algorithms: 
-  - ZS
-  - ZS
-  - ZS
-  - ZS
+  - ZhangSuenNoPtrs
+  - ZhangSuenNoPtrs
+  - ZhangSuenNoPtrs
+  - ZhangSuenNoPtrs
+  - GuoHall
+  - GuoHall
+  - ChenHsu
+  - ChenHsu
 
 # -------------------------------------------------------------------------------------
 # Datasets to use for each test
