@@ -46,9 +46,9 @@ struct ConfigData {
     bool perform_memory;                 // Whether to perform memory tests or not
     bool perform_average_ws;             // Whether to perform average tests with steps or not
 
-    bool perform_check_8connectivity_std;// Whether to perform 8-connectivity test on PerformLabeling() functions
-    bool perform_check_8connectivity_ws; // Whether to perform 8-connectivity test on PerformLabelingWithSteps() functions
-    bool perform_check_8connectivity_mem;// Whether to perform 8-connectivity test on PerformLabelingMem() functions
+    bool perform_check_std;             // Whether to perform correctness on PerformThinning() functions
+    bool perform_check_ws;              // Whether to perform correctness on PerformThinningWithSteps() functions
+    bool perform_check_mem;             // Whether to perform correctness on PerformThinningMem() functions
 
     bool average_color_labels;           // If true, labeled image from average tests will be colored and stored
     bool density_color_labels;           // If true, labeled image from density tests will be colored and stored
@@ -115,9 +115,9 @@ struct ConfigData {
         perform_granularity          = ReadBool(fs["perform"]["granularity"]);
         perform_memory               = ReadBool(fs["perform"]["memory"]);
 
-        perform_check_8connectivity_std = ReadBool(fs["correctness_tests"]["eight_connectivity_standard"]);
-        perform_check_8connectivity_ws  = ReadBool(fs["correctness_tests"]["eight_connectivity_steps"]);
-        perform_check_8connectivity_mem = ReadBool(fs["correctness_tests"]["eight_connectivity_memory"]);
+        perform_check_std = ReadBool(fs["correctness_tests"]["standard"]);
+        perform_check_ws  = ReadBool(fs["correctness_tests"]["steps"]);
+        perform_check_mem = ReadBool(fs["correctness_tests"]["memory"]);
 
         average_color_labels         = ReadBool(fs["color_labels"]["average"]);
         density_color_labels         = ReadBool(fs["color_labels"]["density"]);

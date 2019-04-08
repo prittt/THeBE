@@ -136,33 +136,74 @@ int main()
 
     // Check if labeling methods of the specified algorithms exist
     Thinning::img_ = Mat1b(1, 1, static_cast<uchar>(0));
-    for (const auto& algo_name : cfg.ccl_existing_algorithms) {
+    for (size_t i = 0; i < cfg.ccl_existing_algorithms.size(); ++i) {
+        string algo_name = cfg.ccl_existing_algorithms[i];
         const auto& algorithm = ThinningMapSingleton::GetThinning(algo_name);
-        if (cfg.perform_average || cfg.perform_density || cfg.perform_granularity || cfg.perform_correctness) {
+        if (cfg.perform_average || cfg.perform_density || cfg.perform_granularity || (cfg.perform_correctness && cfg.perform_check_std)) {
             try {
                 algorithm->PerformThinning();
                 cfg.ccl_average_algorithms.push_back(algo_name);
 
-
+                if (cfg.perform_correctness && cfg.perform_check_std) {
+                    string check_algo_name = cfg.ccl_check_existing_algorithms[i];
+                    const auto& check_algorithm = ThinningMapSingleton::GetThinning(check_algo_name);
+                    try {
+                        check_algorithm->PerformThinning();
+                        cfg.ccl_check_average_algorithms.push_back(check_algo_name);
+                    }
+                    catch (const runtime_error& e) {
+                        ob_setconf.Cwarning(check_algo_name + ": " + e.what());
+                        ob_setconf.Cwarning("Standard correctness test disabled!");
+                        cfg.perform_check_std = false;
+                    }
+                }
             }
             catch (const runtime_error& e) {
                 ob_setconf.Cwarning(algo_name + ": " + e.what());
             }
         }
-        if (cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_8connectivity_ws)) {
+        if (cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_ws)) {
             try {
                 algorithm->PerformThinningWithSteps();
                 cfg.ccl_average_ws_algorithms.push_back(algo_name);
+
+                if (cfg.perform_correctness && cfg.perform_check_ws) {
+                    string check_algo_name = cfg.ccl_check_existing_algorithms[i];
+                    const auto& check_algorithm = ThinningMapSingleton::GetThinning(check_algo_name);
+                    try {
+                        check_algorithm->PerformThinningWithSteps();
+                        cfg.ccl_check_average_ws_algorithms.push_back(check_algo_name);
+                    }
+                    catch (const runtime_error& e) {
+                        ob_setconf.Cwarning(check_algo_name + ": " + e.what());
+                        ob_setconf.Cwarning("Steps correctness test disabled!");
+                        cfg.perform_check_ws = false;
+                    }
+                }
             }
             catch (const runtime_error& e) {
                 ob_setconf.Cwarning(algo_name + ": " + e.what());
             }
         }
-        if (cfg.perform_memory || (cfg.perform_correctness && cfg.perform_check_8connectivity_mem)) {
+        if (cfg.perform_memory || (cfg.perform_correctness && cfg.perform_check_mem)) {
             try {
                 vector<uint64_t> temp;
                 algorithm->PerformThinningMem(temp);
                 cfg.ccl_mem_algorithms.push_back(algo_name);
+
+                if (cfg.perform_correctness && cfg.perform_check_mem) {
+                    string check_algo_name = cfg.ccl_check_existing_algorithms[i];
+                    const auto& check_algorithm = ThinningMapSingleton::GetThinning(check_algo_name);
+                    try {
+                        check_algorithm->PerformThinningMem(temp);
+                        cfg.ccl_check_mem_algorithms.push_back(check_algo_name);
+                    }
+                    catch (const runtime_error& e) {
+                        ob_setconf.Cwarning(check_algo_name + ": " + e.what());
+                        ob_setconf.Cwarning("Memory correctness test disabled!");
+                        cfg.perform_check_mem = false;
+                    }
+                }
             }
             catch (const runtime_error& e) {
                 ob_setconf.Cwarning(algo_name + ": " + e.what());
@@ -170,22 +211,22 @@ int main()
         }
     }
 
-    if ((cfg.perform_average || (cfg.perform_correctness && cfg.perform_check_8connectivity_std)) && cfg.ccl_average_algorithms.size() == 0) {
+    if ((cfg.perform_average || (cfg.perform_correctness && cfg.perform_check_std)) && cfg.ccl_average_algorithms.size() == 0) {
         ob_setconf.Cwarning("There are no 'algorithms' with valid 'PerformThinning()' method, related tests will be skipped");
         cfg.perform_average = false;
-        cfg.perform_check_8connectivity_std = false;
+        cfg.perform_check_std = false;
     }
 
-    if ((cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_8connectivity_ws)) && cfg.ccl_average_ws_algorithms.size() == 0) {
+    if ((cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_ws)) && cfg.ccl_average_ws_algorithms.size() == 0) {
         ob_setconf.Cwarning("There are no 'algorithms' with valid 'PerformThinningWithSteps()' method, related tests will be skipped");
         cfg.perform_average_ws = false;
-        cfg.perform_check_8connectivity_ws = false;
+        cfg.perform_check_ws = false;
     }
 
-    if ((cfg.perform_memory || (cfg.perform_correctness && cfg.perform_check_8connectivity_mem)) && cfg.ccl_mem_algorithms.size() == 0) {
+    if ((cfg.perform_memory || (cfg.perform_correctness && cfg.perform_check_mem)) && cfg.ccl_mem_algorithms.size() == 0) {
         ob_setconf.Cwarning("There are no 'algorithms' with valid 'PerformThinningMem()' method, related tests will be skipped");
         cfg.perform_memory = false;
-        cfg.perform_check_8connectivity_mem = false;
+        cfg.perform_check_mem = false;
     }
 
     if (cfg.perform_average && (cfg.average_tests_number < 1 || cfg.average_tests_number > 999)) {
@@ -312,19 +353,19 @@ int main()
     ThebeTests yt(cfg);
 
     // Correctness test
-    /*if (cfg.perform_correctness) {
-        if (cfg.perform_check_8connectivity_std) {
+    if (cfg.perform_correctness) {
+        if (cfg.perform_check_std) {
             yt.CheckPerformThinning();
         }
 
-        if (cfg.perform_check_8connectivity_ws) {
-            yt.CheckPerformThinningWithSteps();
+        if (cfg.perform_check_ws) {
+           // yt.CheckPerformThinningWithSteps();
         }
 
-        if (cfg.perform_check_8connectivity_mem) {
-            yt.CheckPerformThinningMem();
+        if (cfg.perform_check_mem) {
+           // yt.CheckPerformThinningMem();
         }
-    }*/
+    }
 
     // Average test
     if (cfg.perform_average) {
