@@ -28,4 +28,75 @@
 
 #include "thinning_bolelli_2019.h"
 
-REGISTER_THINNING(ZS_DRAG);
+REGISTER_THINNING(ZhangSuenDrag);
+
+inline bool ZhangSuenDrag::thinning_iteration(cv::Mat1b& img, int iter) 
+{
+    cv::Mat1b out(img.size(), 0);
+
+    auto w = img.cols;
+
+    bool modified = false;
+    for (int r = 1; r < img.rows - 1; r++) {
+        const unsigned char* const img_row = img.ptr<unsigned char>(r);
+        const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
+        const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
+        unsigned char* const out_raw = out.ptr<unsigned char>(r);
+
+#define CONDITION_P1 img_row[c]
+#define CONDITION_P2 img_row_prev[c]
+#define CONDITION_P3 img_row_prev[c+1]
+#define CONDITION_P4 img_row[c+1]
+#define CONDITION_P5 img_row_foll[c+1]
+#define CONDITION_P6 img_row_foll[c]
+#define CONDITION_P7 img_row_foll[c-1]
+#define CONDITION_P8 img_row[c-1]
+#define CONDITION_P9 img_row_prev[c-1]
+#define CONDITION_ITER iter
+
+#define ACTION_1 ;                  // keep0
+#define ACTION_2 out_raw[c] = 1;      // keep1
+#define ACTION_3 modified = true;   // change0
+
+        int c = -1;
+        goto tree_0;
+
+#include "thinning_bolelli_2019_drag.inc"
+
+    }
+
+    img = out;
+
+#undef CONDITION_P1
+#undef CONDITION_P2
+#undef CONDITION_P3
+#undef CONDITION_P4
+#undef CONDITION_P5
+#undef CONDITION_P6
+#undef CONDITION_P7
+#undef CONDITION_P8
+#undef CONDITION_P9
+#undef CONDITION_ITER
+
+#undef ACTION_1
+#undef ACTION_2
+#undef ACTION_3
+
+    return modified;
+}
+
+void ZhangSuenDrag::PerformThinning()
+{
+    img_out_ = img_.clone();
+    // The input image should be binary 0 background, 255 foregroung
+    //img_out_ /= 255;
+
+    while (true) {
+        if (!thinning_iteration(img_out_, 0))
+            break;
+        if (!thinning_iteration(img_out_, 1))
+            break;
+    }
+
+    img_out_ *= 255;
+}

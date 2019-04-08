@@ -48,7 +48,7 @@ public:
     void PerformThinning();
 };
 
-class GuoHall_LUT : public Thinning {
+class GuoHallLUT : public Thinning {
 public:
     inline static bool should_remove_0(uint16_t block);
     inline static bool should_remove_1(uint16_t block);

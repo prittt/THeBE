@@ -1,7 +1,7 @@
 #include "thinning_guohall_1989.h"
 
 REGISTER_THINNING(GuoHall);
-REGISTER_THINNING(GuoHall_LUT);
+REGISTER_THINNING(GuoHallLUT);
 
 #define BLOCK_TO_P						\
     const uchar p2 = (block >> 1) & 1;  \
@@ -59,7 +59,7 @@ void GuoHall::PerformThinning()
     img_out_ *= 255;
 }
 
-inline bool GuoHall_LUT::should_remove_0(uint16_t block)
+inline bool GuoHallLUT::should_remove_0(uint16_t block)
 {
     static bool GuoHall_LUT0[512] = {
     0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,
@@ -82,7 +82,7 @@ inline bool GuoHall_LUT::should_remove_0(uint16_t block)
     return GuoHall_LUT0[block];
 }
 
-inline bool GuoHall_LUT::should_remove_1(uint16_t block)
+inline bool GuoHallLUT::should_remove_1(uint16_t block)
 {
     static bool GuoHall_LUT1[512] = {
     0,0,0,0,0,0,0,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,0,0,1,1,
@@ -105,7 +105,7 @@ inline bool GuoHall_LUT::should_remove_1(uint16_t block)
     return GuoHall_LUT1[block];
 }
 
-void GuoHall_LUT::PerformThinning()
+void GuoHallLUT::PerformThinning()
 {
     cv::Mat1b img_input = img_.clone();
     img_out_ = cv::Mat1b(img_.size());

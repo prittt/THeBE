@@ -43,20 +43,20 @@ public:
     inline static bool should_remove_1(uint16_t block);
 
     THINNING_ITERATION(0)
-        THINNING_ITERATION(1)
+    THINNING_ITERATION(1)
 
-        void PerformThinning();
+    void PerformThinning();
 };
 
-class ChenHsu_LUT : public Thinning {
+class ChenHsuLUT : public Thinning {
 public:
     inline static bool should_remove_0(uint16_t block);
     inline static bool should_remove_1(uint16_t block);
 
     THINNING_ITERATION(0)
-        THINNING_ITERATION(1)
+    THINNING_ITERATION(1)
 
-        void PerformThinning();
+    void PerformThinning();
 };
 
 #endif // !THEBE_THINNING_CHENHSU_H_

@@ -37,106 +37,37 @@
 #include "thinning_iteration.h"
 #include "register.h"
 
-class ZS : public Thinning {
+class ZhangSuen : public Thinning {
 public:
-	ZS() {}
+    inline static bool should_remove_0(uint16_t block);
+    inline static bool should_remove_1(uint16_t block);
 
-#define BLOCK_TO_P						\
-    const uchar p2 = (block >> 1) & 1;  \
-    const uchar p3 = (block >> 2) & 1;  \
-    const uchar p4 = (block >> 5) & 1;  \
-    const uchar p5 = (block >> 8) & 1;  \
-    const uchar p6 = (block >> 7) & 1;  \
-    const uchar p7 = (block >> 6) & 1;  \
-    const uchar p8 = (block >> 3) & 1;  \
-    const uchar p9 = (block >> 0) & 1;  \
+    THINNING_ITERATION(0)
+    THINNING_ITERATION(1)
 
-	inline static bool should_remove_0(uint16_t block) {
-		BLOCK_TO_P
+    void PerformThinning();
+};
 
-		int A = (p2 == 0 && p3 == 1) + (p3 == 0 && p4 == 1) +
-				(p4 == 0 && p5 == 1) + (p5 == 0 && p6 == 1) +
-				(p6 == 0 && p7 == 1) + (p7 == 0 && p8 == 1) +
-				(p8 == 0 && p9 == 1) + (p9 == 0 && p2 == 1);
-		int B = p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
-		int m1 = p2 * p4 * p6;
-		int m2 = p4 * p6 * p8;
+class ZhangSuenNoPtrs : public ZhangSuen {
+public:
+    using ZhangSuen::should_remove_0;
+    using ZhangSuen::should_remove_1;
 
-		return A == 1 && (B >= 2 && B <= 6) && m1 == 0 && m2 == 0;
-	}
-	inline static bool should_remove_1(uint16_t block) {
-		BLOCK_TO_P
+    THINNING_ITERATION_OLD(0)
+    THINNING_ITERATION_OLD(1)
 
-		int A = (p2 == 0 && p3 == 1) + (p3 == 0 && p4 == 1) +
-				(p4 == 0 && p5 == 1) + (p5 == 0 && p6 == 1) +
-				(p6 == 0 && p7 == 1) + (p7 == 0 && p8 == 1) +
-				(p8 == 0 && p9 == 1) + (p9 == 0 && p2 == 1);
-		int B = p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
-		int m1 = p2 * p4 * p8;
-		int m2 = p2 * p6 * p8;
+    using ZhangSuen::PerformThinning;
+};
 
-		return A == 1 && (B >= 2 && B <= 6) && m1 == 0 && m2 == 0;
-	}
+class ZhangSuenLUT : public Thinning {
+public:
+    inline static bool should_remove_0(uint16_t block);
+    inline static bool should_remove_1(uint16_t block);
 
-	THINNING_ITERATION_OLD(0)
-	THINNING_ITERATION_OLD(1)
+    THINNING_ITERATION(0)
+    THINNING_ITERATION(1)
 
-    void PerformThinning()
-    {
-		cv::Mat1b img_input = img_.clone();
-		img_out_ = cv::Mat1b(img_.size());
-		// The input image should be binary 0 background, 255 foregroung
-		//img_out_ /= 255;
-
-		while (true) {
-			if (!thinning_iteration_0(img_input, img_out_))
-				break;
-			if (!thinning_iteration_1(img_out_, img_input))
-				break;
-		}
-
-		img_out_ *= 255;
-
-    }
-
-    void PerformThinningWithSteps()
-    {
-        //double alloc_timing = Alloc();
-
-        //perf_.start();
-        //FirstScan();
-        //perf_.stop();
-        //perf_.store(Step(StepType::FIRST_SCAN), perf_.last());
-
-        //perf_.start();
-        //SecondScan();
-        //perf_.stop();
-        //perf_.store(Step(StepType::SECOND_SCAN), perf_.last());
-
-        //perf_.start();
-        //Dealloc();
-        //perf_.stop();
-        //perf_.store(Step(StepType::ALLOC_DEALLOC), perf_.last() + alloc_timing);
-    }
-
-    void PerformThinningMem(std::vector<uint64_t>& accesses)
-    {
-       
-    }
-
-private:
-    
-	double Alloc()
-	{}
-
-	void Dealloc()
-	{}
-
-	void FirstScan()
-	{}
-
-	void SecondScan()
-	{}
+    void PerformThinning();
 };
 
 #endif // !THEBE_THINNING_ZHANGSUEN_H_
