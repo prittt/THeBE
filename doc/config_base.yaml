@@ -12,7 +12,13 @@
 perform: 
   average:            true
   average_with_steps: false
-
+  correctness:        false  
+  
+correctness_tests: 
+  standard: true
+  steps:    true
+  memory:   true
+  
 # Number of tests repetitions 
 tests_number: 
   average:            10
