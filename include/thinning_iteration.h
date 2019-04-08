@@ -54,7 +54,7 @@
 			const unsigned char* const img_row = img.ptr<unsigned char>(r);   \
 			const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]); \
 			const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);	\
-			unsigned* const out_raw = out.ptr<unsigned>(r);					  \
+			unsigned char* const out_raw = out.ptr<unsigned char>(r);		  \
 			block = 0;                                                        \
             block |= img_row_prev[0] << 2;                                    \
             block |= img_row[0] << 5;							              \

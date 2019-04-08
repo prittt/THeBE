@@ -12,7 +12,13 @@
 perform: 
   average:            true
   average_with_steps: false
-
+  correctness:        false  
+  
+correctness_tests: 
+  standard: true
+  steps:    true
+  memory:   true
+  
 # Number of tests repetitions 
 tests_number: 
   average:            10
@@ -23,11 +29,23 @@ tests_number:
 # -------------------------------------------------------------------------------------
 
 algorithms: 
-  - ZHANGSUEN_DRAG
+  - ZS
+  - ZS_PTRS
+  - ZS_LUT
+  - ZS_DRAG
+
+check_algorithms: 
+  - ZS
+  - ZS
+  - ZS
+  - ZS
 
 # -------------------------------------------------------------------------------------
 # Datasets to use for each test
 # -------------------------------------------------------------------------------------
+
+# List of datasets on which "Correctness Tests" shall be run
+check_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
 
 # List of datasets on which "Average Runtime Tests" shall be run
 average_datasets: ["fingerprints", "tobacco800", "xdocs"]
