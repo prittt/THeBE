@@ -93,9 +93,16 @@ struct ConfigData {
     std::vector<cv::String> ccl_algorithms;          // Lists of algorithms specified by the user in the config.yaml
     std::vector<cv::String> ccl_existing_algorithms; // Lists of 'ccl_algorithms' actually existing
 
-    std::vector<cv::String> ccl_mem_algorithms;        // List of algorithms which actually support memory tests
-    std::vector<cv::String> ccl_average_algorithms;    // List of algorithms which actually support average tests
-    std::vector<cv::String> ccl_average_ws_algorithms; // List of algorithms which actually support average with steps tests
+	std::vector<cv::String> ccl_check_algorithms;		   // List of check algorithms specified by the user in the config.yaml
+	std::vector<cv::String> ccl_check_existing_algorithms; // Lists of 'ccl_check_algorithms' actually existing
+
+    std::vector<cv::String> ccl_mem_algorithms;        // List of algorithms that actually support memory tests
+    std::vector<cv::String> ccl_average_algorithms;    // List of algorithms that actually support average tests
+    std::vector<cv::String> ccl_average_ws_algorithms; // List of algorithms that actually support average with steps tests
+
+	std::vector<cv::String> ccl_check_mem_algorithms;        // List of check algorithms that actually support memory tests
+	std::vector<cv::String> ccl_check_average_algorithms;    // List of check algorithms that actually support average tests
+	std::vector<cv::String> ccl_check_average_ws_algorithms; // List of check algorithms that actually support average with steps tests
 
     std::string yacclab_os;             // Name of the current OS
 
@@ -114,8 +121,6 @@ struct ConfigData {
 
         average_color_labels         = ReadBool(fs["color_labels"]["average"]);
         density_color_labels         = ReadBool(fs["color_labels"]["density"]);
-
-        write_n_labels               = ReadBool(fs["write_n_labels"]);
 
         average_save_middle_tests    = ReadBool(fs["save_middle_tests"]["average"]);
         average_ws_save_middle_tests = ReadBool(fs["save_middle_tests"]["average_with_steps"]);
@@ -159,6 +164,7 @@ struct ConfigData {
         cv::read(fs["average_datasets_with_steps"], average_ws_datasets);
         cv::read(fs["memory_datasets"], memory_datasets);
         cv::read(fs["algorithms"], ccl_algorithms);
+		cv::read(fs["check_algorithms"], ccl_check_algorithms);
 
         yacclab_os                   = static_cast<std::string>(fs["os"]);
     }

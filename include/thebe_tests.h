@@ -43,11 +43,12 @@ class ThebeTests {
 public:
 	ThebeTests(const ConfigData& cfg) : cfg_(cfg) {}
 
-    /*void CheckPerformThinning()
+   /* void CheckPerformThinning()
     {
         std::string title = "Checking Correctness of 'PerformThinning()' (8-Connectivity)";
-        CheckAlgorithms(title, cfg_.ccl_average_algorithms, &Thinning::PerformThinning);
-    }
+        CheckAlgorithms(title, cfg_.ccl_average_algorithms, cfg_.ccl_check_average_algorithms, &Thinning::PerformThinning);
+    }*/
+	/*
     void CheckPerformThinningWithSteps()
     {
         std::string title = "Checking Correctness of 'PerformThinningWithSteps()' (8-Connectivity)";
@@ -82,7 +83,7 @@ private:
     void SaveAverageWithStepsResults(const std::string& os_name, const cv::String& dataset_name, bool rounded);
 
     //template <typename FnP, typename... Args>
-    //void CheckAlgorithms(const std::string& title, const std::vector<cv::String>& ccl_algorithms, const FnP func, Args&&... args)
+    //void CheckAlgorithms(const std::string& title, const std::vector<cv::String>& ccl_algorithms, const std::vector<cv::String>& ccl_check_algorithms, const FnP func, Args&&... args)
     //{
     //    OutputBox ob(title);
 
