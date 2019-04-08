@@ -84,7 +84,7 @@ bool ThebeTests::CheckFileList(const path& base_path, vector<pair<string, bool>>
     return ret;
 }
 
-// This function take a Mat1d of results and save it in the  specified output-stream
+// This function take a Mat1d of results and save it in the specified output-stream
 bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const string& o_filename, const Mat1i& labels, const vector<pair<string, bool>>& filenames, const std::vector<cv::String>& ccl_algorithms)
 {
     ofstream os(o_filename);
@@ -111,7 +111,6 @@ bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const strin
                 os << algo_name + "_" << Step(step) << '\t';
             }
         }
-        cfg_.write_n_labels ? os << algo_name + "_n_labels" << '\t' : os << "";
     }
     os << '\n';
 
@@ -129,7 +128,6 @@ bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const strin
                         //os << 0 << '\t';
                     }
                 }
-                cfg_.write_n_labels ? os << labels(files, i) << '\t' : os << "";
                 ++i;
             }
             os << '\n';
@@ -150,7 +148,6 @@ bool ThebeTests::SaveBroadOutputResults(const Mat1d& results, const string& o_fi
     os << "#";
     for (const auto& algo_name : ccl_algorithms) {
         os << '\t' << algo_name;
-        cfg_.write_n_labels ? os << '\t' << "n_label" : os << "";
     }
     os << '\n';
     // To set heading file format
@@ -160,7 +157,6 @@ bool ThebeTests::SaveBroadOutputResults(const Mat1d& results, const string& o_fi
             os << filenames[files].first << '\t';
             for (unsigned i = 0; i < ccl_algorithms.size(); ++i) {
                 os << results(files, i) << '\t';
-                cfg_.write_n_labels ? os << labels(files, i) << '\t' : os << "";
             }
             os << '\n';
         }
@@ -191,16 +187,6 @@ void ThebeTests::SaveAverageWithStepsResults(const string& os_name, const String
         const auto& algo_name = cfg_.ccl_average_ws_algorithms[r];
         double cumulative_sum{ 0.0 };
 
-        // Gnuplot requires double-escaped name when underscores are encountered
-        //{
-        //    string algo_name_double_escaped{ algo_name };
-        //    std::size_t found = algo_name_double_escaped.find_first_of("_");
-        //    while (found != std::string::npos) {
-        //        algo_name_double_escaped.insert(found, "\\\\");
-        //        found = algo_name_double_escaped.find_first_of("_", found + 3);
-        //    }
-        //    os << algo_name_double_escaped << '\t';
-        //}
         os << DoubleEscapeUnderscore(string(algo_name)) << '\t';
 
         for (int c = 0; c < results.cols; ++c) {
