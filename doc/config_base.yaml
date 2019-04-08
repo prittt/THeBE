@@ -45,7 +45,7 @@ check_algorithms:
 # -------------------------------------------------------------------------------------
 
 # List of datasets on which "Correctness Tests" shall be run
-average_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
+check_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
 
 # List of datasets on which "Average Runtime Tests" shall be run
 average_datasets: ["fingerprints", "tobacco800", "xdocs"]
