@@ -43,11 +43,11 @@ class ThebeTests {
 public:
 	ThebeTests(const ConfigData& cfg) : cfg_(cfg) {}
 
-   /* void CheckPerformThinning()
+    void CheckPerformThinning()
     {
-        std::string title = "Checking Correctness of 'PerformThinning()' (8-Connectivity)";
+        std::string title = "Checking Correctness of 'PerformThinning()'";
         CheckAlgorithms(title, cfg_.ccl_average_algorithms, cfg_.ccl_check_average_algorithms, &Thinning::PerformThinning);
-    }*/
+    }
 	/*
     void CheckPerformThinningWithSteps()
     {
@@ -82,105 +82,100 @@ private:
     bool SaveBroadOutputResults(const cv::Mat1d& results, const std::string& o_filename, const cv::Mat1i& labels, const std::vector<std::pair<std::string, bool>>& filenames, const std::vector<cv::String>& ccl_algorithms);
     void SaveAverageWithStepsResults(const std::string& os_name, const cv::String& dataset_name, bool rounded);
 
-    //template <typename FnP, typename... Args>
-    //void CheckAlgorithms(const std::string& title, const std::vector<cv::String>& ccl_algorithms, const std::vector<cv::String>& ccl_check_algorithms, const FnP func, Args&&... args)
-    //{
-    //    OutputBox ob(title);
+    template <typename FnP, typename... Args>
+    void CheckAlgorithms(const std::string& title, const std::vector<cv::String>& ccl_algorithms, const std::vector<cv::String>& ccl_check_algorithms, const FnP func, Args&&... args)
+    {
+        OutputBox ob(title);
 
-    //    std::vector<bool> stats(ccl_algorithms.size(), true);  // True if the i-th algorithm is correct, false otherwise
-    //    std::vector<std::string> first_fail(ccl_algorithms.size());  // Name of the file on which algorithm fails the first time
-    //    bool stop = false; // True if all the algorithms are not correct
+        std::vector<bool> stats(ccl_algorithms.size(), true);  // True if the i-th algorithm is correct, false otherwise
+        std::vector<std::string> first_fail(ccl_algorithms.size());  // Name of the file on which algorithm fails the first time
+        bool stop = false; // True if all the algorithms are not correct
 
-    //    for (unsigned i = 0; i < cfg_.check_datasets.size(); ++i) { // For every dataset in the check_datasets list
-    //        cv::String dataset_name(cfg_.check_datasets[i]);
-    //        path dataset_path(cfg_.input_path / path(dataset_name));
-    //        path is_path = dataset_path / path(cfg_.input_txt); // files.txt path
+        for (unsigned i = 0; i < cfg_.check_datasets.size(); ++i) { // For every dataset in the check_datasets list
+            cv::String dataset_name(cfg_.check_datasets[i]);
+            path dataset_path(cfg_.input_path / path(dataset_name));
+            path is_path = dataset_path / path(cfg_.input_txt); // files.txt path
 
-    //        // Load list of images on which ccl_algorithms must be tested
-    //        std::vector<std::pair<std::string, bool>> filenames; // first: filename, second: state of filename (find or not)
-    //        if (!LoadFileList(filenames, is_path)) {
-    //            ob.Cwarning("Unable to open '" + is_path.string() + "'", dataset_name);
-    //            continue;
-    //        }
+            // Load list of images on which ccl_algorithms must be tested
+            std::vector<std::pair<std::string, bool>> filenames; // first: filename, second: state of filename (find or not)
+            if (!LoadFileList(filenames, is_path)) {
+                ob.Cwarning("Unable to open '" + is_path.string() + "'", dataset_name);
+                continue;
+            }
 
-    //        // Number of files
-    //        unsigned filenames_size = static_cast<unsigned>(filenames.size());
-    //        ob.StartUnitaryBox(dataset_name, filenames_size);
+            // Number of files
+            unsigned filenames_size = static_cast<unsigned>(filenames.size());
+            ob.StartUnitaryBox(dataset_name, filenames_size);
 
-    //        for (unsigned file = 0; file < filenames_size && !stop; ++file) { // For each file in list
-    //            ob.UpdateUnitaryBox(file);
+            for (unsigned file = 0; file < filenames_size && !stop; ++file) { // For each file in list
+                ob.UpdateUnitaryBox(file);
 
-    //            std::string filename = filenames[file].first;
-    //            path filename_path = dataset_path / path(filename);
+                std::string filename = filenames[file].first;
+                path filename_path = dataset_path / path(filename);
 
-    //            // Load image
-    //            if (!GetBinaryImage(filename_path, Thinning::img_)) {
-    //                ob.Cmessage("Unable to open '" + filename + "'");
-    //                continue;
-    //            }
+                // Load image
+                if (!GetBinaryImage(filename_path, Thinning::img_)) {
+                    ob.Cmessage("Unable to open '" + filename + "'");
+                    continue;
+                }
+                
+                unsigned j = 0;
+                for (unsigned alg = 0; alg < ccl_algorithms.size(); ++alg) {
+                    string algo_name = ccl_algorithms[alg];
+                    string check_algo_name = ccl_check_algorithms[alg];
 
-    //            unsigned n_labels_correct, n_labels_to_control;
+                    // SAUF with Union-Find is the reference: labels are already "normalized"
+                    Thinning *ref = ThinningMapSingleton::GetThinning(check_algo_name);
+                    ref->PerformThinning();
+                    cv::Mat1b skeleton_img_correct = ref->img_out_.clone();
+                    ref->FreeThinningData();
 
-    //            // SAUF with Union-Find is the reference: labels are already "normalized"
-    //            auto& sauf = ThinningMapSingleton::GetInstance().data_.at("SAUF_UF");
-    //            sauf->PerformThinning();
-    //            n_labels_correct = sauf->n_labels_;
-    //            cv::Mat1i labeled_img_correct = sauf->img_labels_.clone();
-    //            sauf->FreeThinningData();
+                    Thinning *algorithm = ThinningMapSingleton::GetThinning(algo_name);
 
-    //            //cv::Mat1i labeled_img_correct;
-    //            //n_labels_correct = cv::connectedComponents(Thinning::img_, labeled_img_correct, 8, 4, cv::CCL_WU);
+                    // Perform labeling on current algorithm if it has no previously failed
+                    if (stats[j]) {
+                        cv::Mat1b & skeleton_img_to_control = algorithm->img_out_;
 
-    //            unsigned j = 0;
-    //            for (const auto& algo_name : ccl_algorithms) {
-    //                Thinning *algorithm = ThinningMapSingleton::GetThinning(algo_name);
+                        (algorithm->*func)(std::forward<Args>(args)...);
+                        
+                        const auto diff = CompareMat(skeleton_img_correct, skeleton_img_to_control);
 
-    //                // Perform labeling on current algorithm if it has no previously failed
-    //                if (stats[j]) {
-    //                    cv::Mat1i& labeled_img_to_control = algorithm->img_labels_;
+                        algorithm->FreeThinningData(); // Free algorithm's data
 
-    //                    (algorithm->*func)(std::forward<Args>(args)...);
-    //                    n_labels_to_control = algorithm->n_labels_;
+                        if (!diff) {
+                            stats[j] = false;
+                            first_fail[j] = (path(dataset_name) / path(filename)).string();
 
-    //                    NormalizeLabels(labeled_img_to_control);
-    //                    const auto diff = CompareMat(labeled_img_correct, labeled_img_to_control);
+                            // Stop check test if all the algorithms fail
+                            if (adjacent_find(stats.begin(), stats.end(), std::not_equal_to<int>()) == stats.end()) {
+                                stop = true;
+                                break;
+                            }
+                        }
+                    }
+                    ++j;
+                } // For all the Algorithms in the array
+            }// END WHILE (LIST OF IMAGES)
+            ob.StopUnitaryBox();
+        }// END FOR (LIST OF DATASETS)
 
-    //                    algorithm->FreeThinningData(); // Free algorithm's data
+         // To display report of correctness test
+        std::vector<std::string> messages(ccl_algorithms.size());
+        unsigned longest_name = static_cast<unsigned>(max_element(ccl_algorithms.begin(), ccl_algorithms.end(), CompareLengthCvString)->length());
 
-    //                    if (n_labels_correct != n_labels_to_control || !diff) {
-    //                        stats[j] = false;
-    //                        first_fail[j] = (path(dataset_name) / path(filename)).string();
-
-    //                        // Stop check test if all the algorithms fail
-    //                        if (adjacent_find(stats.begin(), stats.end(), std::not_equal_to<int>()) == stats.end()) {
-    //                            stop = true;
-    //                            break;
-    //                        }
-    //                    }
-    //                }
-    //                ++j;
-    //            } // For all the Algorithms in the array
-    //        }// END WHILE (LIST OF IMAGES)
-    //        ob.StopUnitaryBox();
-    //    }// END FOR (LIST OF DATASETS)
-
-    //     // To display report of correctness test
-    //    std::vector<std::string> messages(ccl_algorithms.size());
-    //    unsigned longest_name = static_cast<unsigned>(max_element(ccl_algorithms.begin(), ccl_algorithms.end(), CompareLengthCvString)->length());
-
-    //    unsigned j = 0;
-    //    for (const auto& algo_name : ccl_algorithms) {
-    //        messages[j] = "'" + algo_name + "'" + std::string(longest_name - algo_name.size(), '-');
-    //        if (stats[j]) {
-    //            messages[j] += "-> correct!";
-    //        }
-    //        else {
-    //            messages[j] += "-> NOT correct, it first fails on '" + first_fail[j] + "'";
-    //        }
-    //        ++j;
-    //    }
-    //    ob.DisplayReport("Report", messages);
-    //}
+        unsigned j = 0;
+        for (const auto& algo_name : ccl_algorithms) {
+            messages[j] = "'" + algo_name + "'" + std::string(longest_name - algo_name.size(), '-');
+            if (stats[j]) {
+                messages[j] += "-> correct!";
+            }
+            else {
+                messages[j] += "-> NOT correct, it first fails on '" + first_fail[j] + "'";
+            }
+            ++j;
+        }
+        ob.DisplayReport("Report", messages);
+    }
 };
 
 #endif // !THEBE_THEBE_TESTS_H_
