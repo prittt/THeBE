@@ -67,15 +67,6 @@ unsigned ctoi(const char& c);
 std::string GetDatetime();
 std::string GetDatetimeWithoutSpecialChars();
 
-// Create a bunch of pseudo random colors from labels indexes and create a
-// color representation for the labels
-void ColorLabels(const cv::Mat1i& img_labels, cv::Mat3b& img_out);
-
-// This function may be useful to compare the output of different labeling procedures
-// which may assign different labels to the same object. Use this to force a row major
-// ordering of labels.
-void NormalizeLabels(cv::Mat1i& img_labels);
-
 // Get binary image given a image's filename;
 bool GetBinaryImage(const std::string& filename, cv::Mat1b& binary_mat);
 bool GetBinaryImage(const filesystem::path& p, cv::Mat1b& binary_mat);

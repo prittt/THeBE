@@ -48,18 +48,17 @@ public:
         std::string title = "Checking Correctness of 'PerformThinning()'";
         CheckAlgorithms(title, cfg_.ccl_average_algorithms, cfg_.ccl_check_average_algorithms, &Thinning::PerformThinning);
     }
-	/*
-    void CheckPerformThinningWithSteps()
+	void CheckPerformThinningWithSteps()
     {
         std::string title = "Checking Correctness of 'PerformThinningWithSteps()' (8-Connectivity)";
-        CheckAlgorithms(title, cfg_.ccl_average_ws_algorithms, &Thinning::PerformThinningWithSteps);
+        CheckAlgorithms(title, cfg_.ccl_average_ws_algorithms, cfg_.ccl_average_ws_algorithms, &Thinning::PerformThinningWithSteps);
     }
     void CheckPerformThinningMem()
     {
         std::string title = "Checking Correctness of 'PerformThinningMem()' (8-Connectivity)";
         std::vector<uint64_t> unused;
-        CheckAlgorithms(title, cfg_.ccl_mem_algorithms, &Thinning::PerformThinningMem, unused);
-    }*/
+        CheckAlgorithms(title, cfg_.ccl_mem_algorithms, cfg_.ccl_mem_algorithms, &Thinning::PerformThinningMem, unused);
+    }
 
     void AverageTest();
     void AverageTestWithSteps();

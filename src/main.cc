@@ -359,11 +359,11 @@ int main()
         }
 
         if (cfg.perform_check_ws) {
-           // yt.CheckPerformThinningWithSteps();
+           yt.CheckPerformThinningWithSteps();
         }
 
         if (cfg.perform_check_mem) {
-           // yt.CheckPerformThinningMem();
+           yt.CheckPerformThinningMem();
         }
     }
 
