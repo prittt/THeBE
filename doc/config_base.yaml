@@ -28,25 +28,25 @@ tests_number:
 # List of thinning algorithms to test
 # -------------------------------------------------------------------------------------
 
+# <implementation_name> [,<name_to_be_displayed>] [; <reference_impl_name>]
+# where:
+#   * "implementation_name" : is the name of the algorithm class implementation
+#
+#   * "name_to_be_displayed": is the name that will be used inside output charts and 
+#      tables. If it is not specified "implementation_name" will be used 
+#
+#   * "reference_impl_name" : is the name of the reference algorithm class implementation
+#      that will be used to chech the correctness of the algorithm specified by the 
+#      "implementation_name"
 algorithms: 
-  - ZhangSuen
-  - ZhangSuenNoPtrs
-  - ZhangSuenLUT
-  - ZhangSuenDrag
-  - GuoHall
-  - GuoHallLUT
-  - ChenHsu
-  - ChenHsuLUT
-
-check_algorithms: 
-  - ZhangSuenNoPtrs
-  - ZhangSuenNoPtrs
-  - ZhangSuenNoPtrs
-  - ZhangSuenNoPtrs
-  - GuoHall
-  - GuoHall
-  - ChenHsu
-  - ChenHsu
+  - ZhangSuen       , ZS        ; ZhangSuenNoPtrs
+  - ZhangSuenNoPtrs , ZSNP      ; ZhangSuenNoPtrs
+  - ZhangSuenLUT    , ZS_LUT    ; ZhangSuenNoPtrs
+  - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
+  - GuoHall         , GH        ; GuoHall
+  - GuoHallLUT      , GH_LUT    ; GuoHall
+  - ChenHsu         , CH        ; ChenHsu
+  - ChenHsuLUT      , CH_LUT    ; ChenHsu
 
 # -------------------------------------------------------------------------------------
 # Datasets to use for each test
