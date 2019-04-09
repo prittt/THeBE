@@ -42,6 +42,7 @@ algorithms:
   - ZhangSuen       , ZS        ; ZhangSuenNoPtrs
   - ZhangSuenNoPtrs , ZSNP      ; ZhangSuenNoPtrs
   - ZhangSuenLUT    , ZS_LUT    ; ZhangSuenNoPtrs
+  - ZhangSuenTree   , ZS_TREE   ; ZhangSuenNoPtrs
   - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
   - GuoHall         , GH        ; GuoHall
   - GuoHallLUT      , GH_LUT    ; GuoHall
@@ -56,10 +57,10 @@ algorithms:
 check_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
 
 # List of datasets on which "Average Runtime Tests" shall be run
-average_datasets: ["fingerprints", "tobacco800", "xdocs"]
+average_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
 
 # List of datasets on which "Average Runtime Tests With Steps" shall be run
-average_datasets_with_steps: ["fingerprints", "tobacco800", "xdocs"]
+average_datasets_with_steps: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
 
 # -------------------------------------------------------------------------------------
 # Additional utilities
@@ -72,7 +73,7 @@ output_images: false
 paths: {input: "${THEBE_INPUT_DATASET_PATH}", output: "${THEBE_OUTPUT_RESULTS_PATH}"}
 
 # Save the results of each run test
-save_middle_tests: {average: false, average_with_steps: false, density: false, granularity: false}
+save_middle_tests: {average: false, average_with_steps: false}
 
 os: "${THEBE_OS}"
 
