@@ -22,7 +22,7 @@ correctness_tests:
 # Number of tests repetitions 
 tests_number: 
   average:            1
-  average_with_steps: 10
+  average_with_steps: 1
 
 # -------------------------------------------------------------------------------------
 # List of thinning algorithms to test
@@ -39,8 +39,8 @@ tests_number:
 #      that will be used to chech the correctness of the algorithm specified by the 
 #      "implementation_name"
 algorithms: 
+  - ZhangSuenNoPtrs , ZS_OpenCV ; ZhangSuenNoPtrs
   - ZhangSuen       , ZS        ; ZhangSuenNoPtrs
-#  - ZhangSuenNoPtrs , ZSNP      ; ZhangSuenNoPtrs
   - ZhangSuenLUT    , ZS_LUT    ; ZhangSuenNoPtrs
   - ZhangSuenTree   , ZS_TREE   ; ZhangSuenNoPtrs
   - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
