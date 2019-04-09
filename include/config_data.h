@@ -29,6 +29,8 @@
 #ifndef THEBE_CONFIG_DATA_H_
 #define THEBE_CONFIG_DATA_H_
 
+#include <algorithm>
+
 #include <opencv2/imgproc.hpp>
 
 #include "file_manager.h"
@@ -139,8 +141,6 @@ struct ConfigData {
         cv::read(fs["average_datasets"], average_datasets);
         cv::read(fs["average_datasets_with_steps"], average_ws_datasets);
         cv::read(fs["memory_datasets"], memory_datasets);
-        //cv::read(fs["algorithms"], ccl_algorithms);
-		//cv::read(fs["check_algorithms"], ccl_check_algorithms);
         
         ReadAlgorithms(fs);
 
@@ -164,7 +164,10 @@ struct ConfigData {
         std::vector<cv::String> algos;
         cv::read(fs["algorithms"], algos);
 
-        for (const auto& algo_str : algos) {
+        for (const auto& a : algos) {
+            std::string algo_str(a);
+            algo_str.erase(std::remove_if(algo_str.begin(), algo_str.end(), ::isblank), algo_str.end());
+            
             AlgorithmNames alg_tmp;
             size_t comma_pos = algo_str.find(",");
             size_t column_pos = algo_str.find(";");
