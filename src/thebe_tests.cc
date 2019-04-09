@@ -242,7 +242,7 @@ void ThebeTests::AverageTest()
             continue;
         }
 
-        if (true) {
+        if (cfg_.output_images) {
             if (!create_directories(output_colored_images_path)) {
                 ob.Cwarning("Unable to find/create the output path '" + output_colored_images_path.string() + "', colored images won't be saved");
             }
