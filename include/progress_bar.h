@@ -38,6 +38,7 @@
 
 #include "file_manager.h"
 #include "system_info.h"
+#include "utilities.h"
 
 #define CONSOLE_WIDTH 80
 

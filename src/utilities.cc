@@ -42,8 +42,9 @@
 #include "progress_bar.h"
 #include "system_info.h"
 
-using namespace std;
 using namespace cv;
+using namespace filesystem;
+using namespace std;
 
 #ifdef THEBE_APPLE
 const string kTerminal = "postscript";

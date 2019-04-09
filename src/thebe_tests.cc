@@ -43,8 +43,9 @@
 #include "memory_tester.h"
 #include "utilities.h"
 
-using namespace std;
 using namespace cv;
+using namespace filesystem;
+using namespace std;
 
 //bool CompareLengthCvString(String const& lhs, String const& rhs)
 //{

@@ -49,8 +49,9 @@
 #include "utilities.h"
 #include "thebe_tests.h"
 
-using namespace std;
 using namespace cv;
+using namespace filesystem;
+using namespace std;
 
 int main()
 {

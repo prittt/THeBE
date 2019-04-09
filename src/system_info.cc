@@ -160,7 +160,7 @@ void SystemInfo::SetOsBit()
 
 void SystemInfo::SetOs(ConfigData& cfg)
 {
-    os_ = cfg.yacclab_os;
+    os_ = cfg.thebe_os;
 }
 
 void SystemInfo::SetCompiler()
