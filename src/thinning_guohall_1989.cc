@@ -45,27 +45,27 @@ inline bool GuoHall::should_remove_0(uint16_t block)
 {
     BLOCK_TO_P
 
-    int C = ((!p2) & (p3 | p4)) + ((!p4) & (p5 | p6)) +
-        ((!p6) & (p7 | p8)) + ((!p8) & (p9 | p2));
-    int N1 = (p9 | p2) + (p3 | p4) + (p5 | p6) + (p7 | p8);
-    int N2 = (p2 | p3) + (p4 | p5) + (p6 | p7) + (p8 | p9);
+    int C = ((!p2) && (p3 || p4)) + ((!p4) && (p5 || p6)) +
+        ((!p6) && (p7 || p8)) + ((!p8) && (p9 || p2));
+    int N1 = (p9 || p2) + (p3 || p4) + (p5 || p6) + (p7 || p8);
+    int N2 = (p2 || p3) + (p4 || p5) + (p6 || p7) + (p8 || p9);
     int N = N1 < N2 ? N1 : N2;
-    int m = (p6 | p7 | (!p9)) & p8;
+    int m = (p6 || p7 || (!p9)) && p8;
 
-    return (C == 1) && ((N >= 2) && ((N <= 3)) & (m == 0));
+    return (C == 1) && ((N >= 2) && (N <= 3)) && (m == 0);
 }
 inline bool GuoHall::should_remove_1(uint16_t block)
 {
     BLOCK_TO_P
 
-    int C = ((!p2) & (p3 | p4)) + ((!p4) & (p5 | p6)) +
-        ((!p6) & (p7 | p8)) + ((!p8) & (p9 | p2));
-    int N1 = (p9 | p2) + (p3 | p4) + (p5 | p6) + (p7 | p8);
-    int N2 = (p2 | p3) + (p4 | p5) + (p6 | p7) + (p8 | p9);
+    int C = ((!p2) && (p3 || p4)) + ((!p4) && (p5 || p6)) +
+        ((!p6) && (p7 || p8)) + ((!p8) && (p9 || p2));
+    int N1 = (p9 || p2) + (p3 || p4) + (p5 || p6) + (p7 || p8);
+    int N2 = (p2 || p3) + (p4 || p5) + (p6 || p7) + (p8 || p9);
     int N = N1 < N2 ? N1 : N2;
-    int m = (p2 | p3 | (!p5)) & p4;
+    int m = (p2 || p3 || (!p5)) && p4;
 
-    return (C == 1) && ((N >= 2) && ((N <= 3)) & (m == 0));
+    return (C == 1) && ((N >= 2) && (N <= 3)) && (m == 0);
 }
 
 inline bool GuoHallLUT::should_remove_0(uint16_t block)
