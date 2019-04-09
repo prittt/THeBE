@@ -173,20 +173,6 @@ inline bool ZhangSuenTree::thinning_iteration(cv::Mat1b& img, int iter)
 
     return modified;
 }
-void ZhangSuenTree::PerformThinning()
-{
-    // The input image should be binary (0 background, 255 foreground)
-    img_out_ = img_.clone() / 255;
-
-    while (true) {
-        if (!thinning_iteration(img_out_, 0))
-            break;
-        if (!thinning_iteration(img_out_, 1))
-            break;
-    }
-
-    img_out_ *= 255;
-}
 
 inline bool ZhangSuenDrag::thinning_iteration(cv::Mat1b& img, int iter)
 {
@@ -242,17 +228,4 @@ inline bool ZhangSuenDrag::thinning_iteration(cv::Mat1b& img, int iter)
 
     return modified;
 }
-void ZhangSuenDrag::PerformThinning()
-{
-    // The input image should be binary (0 background, 255 foreground)
-    img_out_ = img_.clone() / 255;
 
-    while (true) {
-        if (!thinning_iteration(img_out_, 0))
-            break;
-        if (!thinning_iteration(img_out_, 1))
-            break;
-    }
-
-    img_out_ *= 255;
-}

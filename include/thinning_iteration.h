@@ -105,4 +105,19 @@
     img_out_ *= 255;                                                          \
 }
 
+#define PERFORM_THINNING_DT void PerformThinning()                             \
+{                                                                              \
+    /* The input image should be binary (0 background, 255 foreground)*/       \
+    img_out_ = img_.clone() / 255;                                             \
+                                                                               \
+    while (true) {                                                             \
+        if (!thinning_iteration(img_out_, 0))                                  \
+            break;                                                             \
+        if (!thinning_iteration(img_out_, 1))                                  \
+            break;                                                             \
+    }                                                                          \
+                                                                               \
+    img_out_ *= 255;                                                           \
+}
+
 #endif // !THEBE_THINNING_ITERATION

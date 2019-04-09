@@ -57,5 +57,17 @@ public:
     PERFORM_THINNING;
 };
 
+class GuoHallTree : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+class GuoHallDrag : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
 #endif // !THEBE_THINNING_GUOHALL_1989_H_
 
