@@ -65,6 +65,9 @@ average_datasets_with_steps: ["fingerprints", "tobacco800", "xdocs"]
 # Additional utilities
 # -------------------------------------------------------------------------------------
 
+# Save output images
+output_images: false
+
 # Directory for input/output paths
 paths: {input: "${THEBE_INPUT_DATASET_PATH}", output: "${THEBE_OUTPUT_RESULTS_PATH}"}
 

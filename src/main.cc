@@ -139,7 +139,7 @@ int main()
     for (size_t i = 0; i < cfg.ccl_existing_algorithms.size(); ++i) {
         string algo_name = cfg.ccl_existing_algorithms[i];
         const auto& algorithm = ThinningMapSingleton::GetThinning(algo_name);
-        if (cfg.perform_average || cfg.perform_density || cfg.perform_granularity || (cfg.perform_correctness && cfg.perform_check_std)) {
+        if (cfg.perform_average || (cfg.perform_correctness && cfg.perform_check_std)) {
             try {
                 algorithm->PerformThinning();
                 cfg.ccl_average_algorithms.push_back(algo_name);
@@ -234,11 +234,6 @@ int main()
         cfg.perform_average = false;
     }
 
-    if (cfg.perform_density && (cfg.density_tests_number < 1 || cfg.density_tests_number > 999)) {
-        ob_setconf.Cwarning("'density test' repetitions cannot be less than 1 or more than 999, skipped");
-        cfg.perform_density = false;
-    }
-
     if (cfg.perform_average_ws && (cfg.average_ws_tests_number < 1 || cfg.average_ws_tests_number > 999)) {
         ob_setconf.Cwarning("'average with steps test' repetitions cannot be less than 1 or more than 999, skipped");
         cfg.perform_average_ws = false;
@@ -265,8 +260,7 @@ int main()
     }
 
     if (!cfg.perform_average && !cfg.perform_correctness &&
-        !cfg.perform_density && !cfg.perform_memory &&
-        !cfg.perform_average_ws && !cfg.perform_granularity) {
+        !cfg.perform_memory && !cfg.perform_average_ws) {
         ob_setconf.Cerror("There are no tests to perform");
     }
 
@@ -335,7 +329,7 @@ int main()
         }
     }
 
-    if (cfg.perform_average || cfg.perform_average_ws || cfg.perform_density || cfg.perform_memory || cfg.perform_granularity) {
+    if (cfg.perform_average || cfg.perform_average_ws || cfg.perform_memory) {
         // Set and create current output directory
         if (!create_directories(cfg.output_path, ec)) {
             ob_setconf.Cerror("Unable to create output directory '" + cfg.output_path.string() + "' - " + ec.message());
@@ -377,22 +371,13 @@ int main()
         yt.AverageTestWithSteps();
     }
 
-    // Density test
-    if (cfg.perform_density) {
-        yt.DensityTest();
-    }
-
-    // Granularity test
-    if (cfg.perform_granularity) {
-        yt.GranularityTest();
-    }
     // Memory test
     if (cfg.perform_memory) {
         yt.MemoryTest();
     }
 
     // Latex Generator
-    if (cfg.perform_average || cfg.perform_average_ws || cfg.perform_density || cfg.perform_memory || cfg.perform_granularity) {
+    if (cfg.perform_average || cfg.perform_average_ws || cfg.perform_memory) {
         yt.LatexGenerator();
     }
 
