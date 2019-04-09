@@ -69,23 +69,6 @@ inline bool GuoHall::should_remove_1(uint16_t block)
     return (C == 1) && ((N >= 2) && ((N <= 3)) & (m == 0));
 }
 
-void GuoHall::PerformThinning()
-{
-    cv::Mat1b img_input = img_.clone();
-    img_out_ = cv::Mat1b(img_.size());
-    // The input image should be binary 0 background, 255 foreground
-    //img_out_ /= 255;
-
-    while (true) {
-        if (!thinning_iteration_0(img_input, img_out_))
-            break;
-        if (!thinning_iteration_1(img_out_, img_input))
-            break;
-    }
-
-    img_out_ *= 255;
-}
-
 inline bool GuoHallLUT::should_remove_0(uint16_t block)
 {
     static bool GuoHall_LUT0[512] = {
@@ -130,20 +113,4 @@ inline bool GuoHallLUT::should_remove_1(uint16_t block)
     1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,
     };
     return GuoHall_LUT1[block];
-}
-
-void GuoHallLUT::PerformThinning()
-{
-    cv::Mat1b img_input = img_.clone();
-    img_out_ = cv::Mat1b(img_.size());
-    //img_out_ /= 255;
-
-    while (true) {
-        if (!thinning_iteration_0(img_input, img_out_))
-            break;
-        if (!thinning_iteration_1(img_out_, img_input))
-            break;
-    }
-
-    img_out_ *= 255;
 }

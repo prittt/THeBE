@@ -71,23 +71,6 @@ inline bool ZhangSuen::should_remove_1(uint16_t block)
     return A == 1 && (B >= 2 && B <= 6) && m1 == 0 && m2 == 0;
 }
 
-void ZhangSuen::PerformThinning()
-{
-    cv::Mat1b img_input = img_.clone();
-    img_out_ = cv::Mat1b(img_.size());
-    // The input image should be binary 0 background, 255 foregroung
-    //img_out_ /= 255;
-
-    while (true) {
-        if (!thinning_iteration_0(img_input, img_out_))
-            break;
-        if (!thinning_iteration_1(img_out_, img_input))
-            break;
-    }
-
-    img_out_ *= 255;
-}
-
 inline bool ZhangSuenLUT::should_remove_0(uint16_t block)
 {
     static bool ZhangSuen_LUT0[512] = {
@@ -134,18 +117,3 @@ inline bool ZhangSuenLUT::should_remove_1(uint16_t block)
     return ZhangSuen_LUT1[block];
 }
 
-void ZhangSuenLUT::PerformThinning()
-{
-    cv::Mat1b img_input = img_.clone();
-    img_out_ = cv::Mat1b(img_.size());
-    //img_out_ /= 255;
-
-    while (true) {
-        if (!thinning_iteration_0(img_input, img_out_))
-            break;
-        if (!thinning_iteration_1(img_out_, img_input))
-            break;
-    }
-
-    img_out_ *= 255;
-}

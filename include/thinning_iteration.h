@@ -89,4 +89,21 @@
         return modified;                                                      \
     }
 
+
+#define PERFORM_THINNING void PerformThinning()                                \
+{                                                                              \
+    cv::Mat1b img_input = img_.clone();                                        \
+    img_out_ = cv::Mat1b(img_.size());                                         \
+    /*img_out_ /= 255;*/                                                       \
+                                                                               \
+    while (true) {                                                             \
+        if (!thinning_iteration_0(img_input, img_out_))                        \
+            break;                                                             \
+        if (!thinning_iteration_1(img_out_, img_input))                        \
+            break;                                                             \
+    }                                                                          \
+                                                                               \
+    img_out_ *= 255;                                                           \
+}
+
 #endif // !THEBE_THINNING_ITERATION
