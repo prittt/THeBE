@@ -246,7 +246,7 @@ void ThebeTests::AverageTest()
             is_path = dataset_path / path(cfg_.input_txt), // files.txt path
             current_output_path(cfg_.output_path / path(cfg_.average_folder) / path(dataset_name)),
             output_broad_path = current_output_path / path(dataset_name + complete_results_suffix),
-            output_colored_images_path = current_output_path / path(cfg_.colors_folder),
+            output_images_path = current_output_path / path(cfg_.output_image_folder),
             output_middle_results_path = current_output_path / path(cfg_.middle_folder),
             average_os_path = current_output_path / path(output_average_results);
 
@@ -256,8 +256,8 @@ void ThebeTests::AverageTest()
         }
 
         if (cfg_.output_images) {
-            if (!create_directories(output_colored_images_path)) {
-                ob.Cwarning("Unable to find/create the output path '" + output_colored_images_path.string() + "', colored images won't be saved");
+            if (!create_directories(output_images_path)) {
+                ob.Cwarning("Unable to find/create the output path '" + output_images_path.string() + "', colored images won't be saved");
             }
         }
 
@@ -341,8 +341,8 @@ void ThebeTests::AverageTest()
                     }
 
 					if (cfg_.output_images) {
-						String colored_image = (output_colored_images_path / path(filename + "_" + algo_name + ".png")).string();
-						imwrite(colored_image, algorithm->img_out_);
+						String output_image = (output_images_path / path(filename + "_" + algo_name + ".png")).string();
+						imwrite(output_image, algorithm->img_out_);
 					}
 
                     algorithm->FreeThinningData();

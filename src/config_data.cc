@@ -63,7 +63,7 @@ ConfigData::ConfigData(const FileStorage& fs) {
 #elif defined(THEBE_LINUX) || defined(THEBE_UNIX) || defined(THEBE_APPLE)
         ".sh";
 #endif
-    colors_folder = "colors";
+    output_image_folder = "output_images";
     middle_folder = "middle_results";
     latex_file = "yacclab_results.tex";
     latex_charts = "averageCharts.tex";

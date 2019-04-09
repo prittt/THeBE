@@ -67,5 +67,17 @@ public:
     PERFORM_THINNING;
 };
 
+class ZhangSuenTree : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    void PerformThinning();
+};
+
+class ZhangSuenDrag : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    void PerformThinning();
+};
+
 #endif // !THEBE_THINNING_ZHANGSUEN_H_
 

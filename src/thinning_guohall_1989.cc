@@ -54,7 +54,6 @@ inline bool GuoHall::should_remove_0(uint16_t block)
 
     return (C == 1) && ((N >= 2) && ((N <= 3)) & (m == 0));
 }
-
 inline bool GuoHall::should_remove_1(uint16_t block)
 {
     BLOCK_TO_P
@@ -91,7 +90,6 @@ inline bool GuoHallLUT::should_remove_0(uint16_t block)
     };
     return GuoHall_LUT0[block];
 }
-
 inline bool GuoHallLUT::should_remove_1(uint16_t block)
 {
     static bool GuoHall_LUT1[512] = {

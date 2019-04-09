@@ -62,7 +62,7 @@ struct ConfigData {
     std::string input_txt;                // File of images list
     std::string gnuplot_script_extension; // Gnuplot scripts extension
     std::string system_script_extension;  // System-based scripts extension
-    std::string colors_folder;            // Folder which will store colored images
+    std::string output_image_folder;      // Folder which will store colored images
     std::string middle_folder;            // Folder which will store middle results
     std::string latex_file;               // Latex file which will store textual average results
     std::string latex_memory_file;        // Latex file which will store textual memory results
