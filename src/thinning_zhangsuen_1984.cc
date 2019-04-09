@@ -123,30 +123,31 @@ inline bool ZhangSuenTree::thinning_iteration(cv::Mat1b& img, int iter)
     cv::Mat1b out(img.size(), 0);
 
     auto w = img.cols;
+    auto h = img.rows;
 
     bool modified = false;
     for (int r = 1; r < img.rows - 1; r++) {
         const unsigned char* const img_row = img.ptr<unsigned char>(r);
         const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
         const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
-        unsigned char* const out_raw = out.ptr<unsigned char>(r);
+        unsigned char* const out_row = out.ptr<unsigned char>(r);
 
 #define CONDITION_P1 img_row[c]
 #define CONDITION_P2 img_row_prev[c]
-#define CONDITION_P3 img_row_prev[c+1]
-#define CONDITION_P4 img_row[c+1]
-#define CONDITION_P5 img_row_foll[c+1]
+#define CONDITION_P3 c+1<w && img_row_prev[c+1]
+#define CONDITION_P4 c+1<w && img_row[c+1] 
+#define CONDITION_P5 c+1<w && img_row_foll[c+1]
 #define CONDITION_P6 img_row_foll[c]
-#define CONDITION_P7 img_row_foll[c-1]
-#define CONDITION_P8 img_row[c-1]
-#define CONDITION_P9 img_row_prev[c-1]
+#define CONDITION_P7 c-1>=0 && img_row_foll[c-1]
+#define CONDITION_P8 c-1>=0 && img_row[c-1]
+#define CONDITION_P9 c-1>=0 && img_row_prev[c-1]
 #define CONDITION_ITER iter
 
 #define ACTION_1 ;                  // keep0
-#define ACTION_2 out_raw[c] = 1;    // keep1
+#define ACTION_2 out_row[c] = 1;    // keep1
 #define ACTION_3 modified = true;   // change0
 
-        for (int c = 1; c < img.cols - 1; ++c) {
+        for (int c = 0; c < img.cols; ++c) {
 
 #include "thinning_zhangsuen_1984_tree.inc"
 
@@ -198,7 +199,7 @@ inline bool ZhangSuenDrag::thinning_iteration(cv::Mat1b& img, int iter)
         const unsigned char* const img_row = img.ptr<unsigned char>(r);
         const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
         const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
-        unsigned char* const out_raw = out.ptr<unsigned char>(r);
+        unsigned char* const out_row = out.ptr<unsigned char>(r);
 
 #define CONDITION_P1 img_row[c]
 #define CONDITION_P2 img_row_prev[c]
@@ -212,7 +213,7 @@ inline bool ZhangSuenDrag::thinning_iteration(cv::Mat1b& img, int iter)
 #define CONDITION_ITER iter
 
 #define ACTION_1 ;                  // keep0
-#define ACTION_2 out_raw[c] = 1;    // keep1
+#define ACTION_2 out_row[c] = 1;    // keep1
 #define ACTION_3 modified = true;   // change0
 
         int c = -1;

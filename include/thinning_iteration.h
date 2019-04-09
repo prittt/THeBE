@@ -54,7 +54,7 @@
 			const unsigned char* const img_row = img.ptr<unsigned char>(r);   \
 			const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]); \
 			const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);	\
-			unsigned char* const out_raw = out.ptr<unsigned char>(r);		  \
+			unsigned char* const out_row = out.ptr<unsigned char>(r);		  \
 			block = 0;                                                        \
             block |= img_row_prev[0] << 2;                                    \
             block |= img_row[0] << 5;							              \
@@ -69,7 +69,7 @@
                     continue;                                                 \
                                                                               \
                 if (!should_remove_##N(block))                                \
-                    out_raw[c] = 1;                                           \
+                    out_row[c] = 1;                                           \
                 else                                                          \
                     modified = true;                                          \
             }                                                                 \
@@ -81,7 +81,7 @@
             if (!(block & (1 << 4)))                                          \
                 continue;                                                     \
             if (!should_remove_##N(block))                                    \
-                out_raw[img.cols - 1] = 1;                                    \
+                out_row[img.cols - 1] = 1;                                    \
             else                                                              \
                 modified = true;                                              \
         }                                                                     \
