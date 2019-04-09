@@ -37,6 +37,12 @@
 
 using namespace filesystem;
 
+struct AlgorithmNames {
+    cv::String test_name    = "";  // Name of the algorithm
+    cv::String check_name   = "";  // Name of the algorithm to compare results with (required by correctness test);
+    cv::String display_name = "";  // Name to be displayed on charts and tables
+};
+
 struct ConfigData {
 
     bool perform_correctness;            // Whether to perform correctness tests or not
@@ -89,20 +95,13 @@ struct ConfigData {
     std::vector<cv::String> average_datasets;     // Lists of dataset on which average tests will be performed
     std::vector<cv::String> average_ws_datasets;  // Lists of dataset on which average tests whit steps will be performed
 
-    std::vector<cv::String> ccl_algorithms;          // Lists of algorithms specified by the user in the config.yaml
-    std::vector<cv::String> ccl_existing_algorithms; // Lists of 'ccl_algorithms' actually existing
+    std::vector<AlgorithmNames> thin_algorithms;          // Lists of algorithms specified by the user in the config.yaml
+    std::vector<AlgorithmNames> thin_existing_algorithms; // Lists of 'ccl_algorithms' actually existing
 
-	std::vector<cv::String> ccl_check_algorithms;		   // List of check algorithms specified by the user in the config.yaml
-	std::vector<cv::String> ccl_check_existing_algorithms; // Lists of 'ccl_check_algorithms' actually existing
-
-    std::vector<cv::String> ccl_mem_algorithms;        // List of algorithms that actually support memory tests
-    std::vector<cv::String> ccl_average_algorithms;    // List of algorithms that actually support average tests
-    std::vector<cv::String> ccl_average_ws_algorithms; // List of algorithms that actually support average with steps tests
-
-	std::vector<cv::String> ccl_check_mem_algorithms;        // List of check algorithms that actually support memory tests
-	std::vector<cv::String> ccl_check_average_algorithms;    // List of check algorithms that actually support average tests
-	std::vector<cv::String> ccl_check_average_ws_algorithms; // List of check algorithms that actually support average with steps tests
-
+	std::vector<AlgorithmNames> thin_mem_algorithms;        // List of algorithms that actually support memory tests
+    std::vector<AlgorithmNames> thin_average_algorithms;    // List of algorithms that actually support average tests
+    std::vector<AlgorithmNames> thin_average_ws_algorithms; // List of algorithms that actually support average with steps tests
+    
     std::string yacclab_os;             // Name of the current OS
 
     ConfigData(const cv::FileStorage& fs) {
@@ -162,8 +161,10 @@ struct ConfigData {
         cv::read(fs["average_datasets"], average_datasets);
         cv::read(fs["average_datasets_with_steps"], average_ws_datasets);
         cv::read(fs["memory_datasets"], memory_datasets);
-        cv::read(fs["algorithms"], ccl_algorithms);
-		cv::read(fs["check_algorithms"], ccl_check_algorithms);
+        //cv::read(fs["algorithms"], ccl_algorithms);
+		//cv::read(fs["check_algorithms"], ccl_check_algorithms);
+        
+        ReadAlgorithms(fs);
 
         yacclab_os                   = static_cast<std::string>(fs["os"]);
     }
@@ -180,8 +181,34 @@ struct ConfigData {
         return b;
     }
 
-    void SetupAlgorithms() {
+    void ReadAlgorithms(const cv::FileStorage& fs) {
         
+        std::vector<cv::String> algos;
+        cv::read(fs["algorithms"], algos);
+
+        for (const auto& algo_str : algos) {
+            AlgorithmNames alg_tmp;
+            size_t comma_pos = algo_str.find(",");
+            size_t column_pos = algo_str.find(";");
+
+            alg_tmp.test_name = algo_str.substr(0, std::min(comma_pos, column_pos));
+            
+            if (comma_pos != std::string::npos) {
+                alg_tmp.display_name = algo_str.substr(comma_pos + 1, column_pos - (comma_pos + 1));
+                if (alg_tmp.display_name == "") {
+                    alg_tmp.display_name = alg_tmp.test_name;
+                }
+            }
+            else {
+                alg_tmp.display_name = alg_tmp.test_name;
+            }
+
+            if (column_pos != std::string::npos) {
+                alg_tmp.check_name = algo_str.substr(column_pos + 1, std::string::npos);
+            }
+
+            thin_algorithms.push_back(alg_tmp);
+        }
     }
 
 };

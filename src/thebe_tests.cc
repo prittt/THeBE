@@ -46,6 +46,16 @@
 using namespace std;
 using namespace cv;
 
+//bool CompareLengthCvString(String const& lhs, String const& rhs)
+//{
+//    return lhs.size() < rhs.size();
+//}
+
+bool CompareLengthCvString(AlgorithmNames const& lhs, AlgorithmNames const& rhs)
+{
+    return lhs.test_name.size() < rhs.test_name.size();
+}
+
 // Load a list of image names from a specified file (files_path) and store them into a vector of
 // pairs (filenames). Each pairs contains the name of the file (first) and a bool (second)
 // representing file state.
@@ -85,7 +95,7 @@ bool ThebeTests::CheckFileList(const path& base_path, vector<pair<string, bool>>
 }
 
 // This function take a Mat1d of results and save it in the specified output-stream
-bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const string& o_filename, const Mat1i& labels, const vector<pair<string, bool>>& filenames, const std::vector<cv::String>& ccl_algorithms)
+bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const string& o_filename, const vector<pair<string, bool>>& filenames, const std::vector<AlgorithmNames>& thin_algorithms)
 {
     ofstream os(o_filename);
     if (!os.is_open()) {
@@ -94,7 +104,8 @@ bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const strin
 
     // To set heading file format
     os << "#" << '\t';
-    for (const auto& algo_name : ccl_algorithms) {
+    for (const auto& algo_struct : thin_algorithms) {
+        String algo_name = algo_struct.test_name;
 
         // Calculate the max of the columns to find unused steps
         Mat1d results_reduced(1, results.at(algo_name).cols);
@@ -108,7 +119,7 @@ bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const strin
             StepType step = static_cast<StepType>(step_number);
             double column_value(results_reduced(0, step_number));
             if (column_value != numeric_limits<double>::max()) {
-                os << algo_name + "_" << Step(step) << '\t';
+                os << algo_struct.display_name + "_" << Step(step) << '\t';
             }
         }
     }
@@ -118,7 +129,8 @@ bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const strin
         if (filenames[files].second) {
             os << filenames[files].first << '\t';
             unsigned i = 0;
-            for (const auto& algo_name : ccl_algorithms) {
+            for (const auto& algo_struct : thin_algorithms) {
+                String algo_name = algo_struct.test_name;
                 for (int step_number = 0; step_number != StepType::ST_SIZE; ++step_number) {
                     if (results.at(algo_name)(files, step_number) != numeric_limits<double>::max()) {
                         os << results.at(algo_name)(files, step_number) << '\t';
@@ -137,7 +149,7 @@ bool ThebeTests::SaveBroadOutputResults(map<String, Mat1d>& results, const strin
     return true;
 }
 
-bool ThebeTests::SaveBroadOutputResults(const Mat1d& results, const string& o_filename, const Mat1i& labels, const vector<pair<string, bool>>& filenames, const std::vector<cv::String>& ccl_algorithms)
+bool ThebeTests::SaveBroadOutputResults(const Mat1d& results, const string& o_filename, const vector<pair<string, bool>>& filenames, const std::vector<AlgorithmNames>& thin_algorithms)
 {
     ofstream os(o_filename);
     if (!os.is_open()) {
@@ -146,8 +158,8 @@ bool ThebeTests::SaveBroadOutputResults(const Mat1d& results, const string& o_fi
 
     // To set heading file format
     os << "#";
-    for (const auto& algo_name : ccl_algorithms) {
-        os << '\t' << algo_name;
+    for (const auto& algo_struct : thin_algorithms) {
+        os << '\t' << algo_struct.display_name;
     }
     os << '\n';
     // To set heading file format
@@ -155,7 +167,7 @@ bool ThebeTests::SaveBroadOutputResults(const Mat1d& results, const string& o_fi
     for (unsigned files = 0; files < filenames.size(); ++files) {
         if (filenames[files].second) {
             os << filenames[files].first << '\t';
-            for (unsigned i = 0; i < ccl_algorithms.size(); ++i) {
+            for (unsigned i = 0; i < thin_algorithms.size(); ++i) {
                 os << results(files, i) << '\t';
             }
             os << '\n';
@@ -184,10 +196,10 @@ void ThebeTests::SaveAverageWithStepsResults(const string& os_name, const String
     const auto& results = average_ws_results_.at(dataset_name);
 
     for (int r = 0; r < results.rows; ++r) {
-        const auto& algo_name = cfg_.ccl_average_ws_algorithms[r];
+        const auto& algo_struct = cfg_.thin_average_ws_algorithms[r];
         double cumulative_sum{ 0.0 };
 
-        os << DoubleEscapeUnderscore(string(algo_name)) << '\t';
+        os << DoubleEscapeUnderscore(string(algo_struct.display_name)) << '\t';
 
         for (int c = 0; c < results.cols; ++c) {
             if (rounded) {
@@ -220,7 +232,7 @@ void ThebeTests::AverageTest()
         average_results_suffix = "_average.txt";
 
     // Initialize results container
-    average_results_ = cv::Mat1d(static_cast<unsigned>(cfg_.average_datasets.size()), static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), std::numeric_limits<double>::max());
+    average_results_ = cv::Mat1d(static_cast<unsigned>(cfg_.average_datasets.size()), static_cast<unsigned>(cfg_.thin_average_algorithms.size()), std::numeric_limits<double>::max());
 
     for (unsigned d = 0; d < cfg_.average_datasets.size(); ++d) { // For every dataset in the average list
 
@@ -242,12 +254,6 @@ void ThebeTests::AverageTest()
             continue;
         }
 
-        if (true) {
-            if (!create_directories(output_colored_images_path)) {
-                ob.Cwarning("Unable to find/create the output path '" + output_colored_images_path.string() + "', colored images won't be saved");
-            }
-        }
-
         // For AVERAGE
         ofstream average_os(average_os_path.string());
         if (!average_os.is_open()) {
@@ -266,10 +272,9 @@ void ThebeTests::AverageTest()
         int filenames_size = static_cast<unsigned>(filenames.size());
 
         // To save middle/min and average results;
-        Mat1d min_res(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), numeric_limits<double>::max());
-        Mat1d current_res(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), numeric_limits<double>::max());
-        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), 0);
-        vector<pair<double, uint16_t>> supp_average(cfg_.ccl_average_algorithms.size(), make_pair(0.0, 0));
+        Mat1d min_res(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), numeric_limits<double>::max());
+        Mat1d current_res(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), numeric_limits<double>::max());
+        vector<pair<double, uint16_t>> supp_average(cfg_.thin_average_algorithms.size(), make_pair(0.0, 0));
 
         // Start output message box
         ob.StartRepeatedBox(dataset_name, filenames_size, cfg_.average_tests_number);
@@ -281,9 +286,11 @@ void ThebeTests::AverageTest()
         }
 
         map<String, unsigned> algo_pos;
-        for (size_t i = 0; i < cfg_.ccl_average_algorithms.size(); ++i)
-            algo_pos[cfg_.ccl_average_algorithms[i]] = static_cast<unsigned>(i);
-        auto shuffled_ccl_average_algorithms = cfg_.ccl_average_algorithms;
+        vector<String> shuffled_thin_average_algorithms(cfg_.thin_average_algorithms.size());
+        for (size_t i = 0; i < cfg_.thin_average_algorithms.size(); ++i) {
+            algo_pos[cfg_.thin_average_algorithms[i].test_name] = static_cast<unsigned>(i);
+            shuffled_thin_average_algorithms[i] = cfg_.thin_average_algorithms[i].test_name;
+        }
 
         // Test is executed n_test times
         for (unsigned test = 0; test < cfg_.average_tests_number; ++test) {
@@ -301,10 +308,10 @@ void ThebeTests::AverageTest()
                     continue;
                 }
 
-                random_shuffle(begin(shuffled_ccl_average_algorithms), end(shuffled_ccl_average_algorithms));
+                random_shuffle(begin(shuffled_thin_average_algorithms), end(shuffled_thin_average_algorithms));
 
                 // For all the Algorithms in the array
-                for (const auto& algo_name : shuffled_ccl_average_algorithms) {
+                for (const auto& algo_name : shuffled_thin_average_algorithms) {
                     Thinning *algorithm = ThinningMapSingleton::GetThinning(algo_name);
                     unsigned i = algo_pos[algo_name];
 
@@ -326,11 +333,6 @@ void ThebeTests::AverageTest()
                         min_res(file, i) = algorithm->perf_.last();
                     }
 
-					if (true) {
-						String colored_image = (output_colored_images_path / path(filename + "_" + algo_name + ".png")).string();
-						imwrite(colored_image, algorithm->img_out_);
-					}
-
                     algorithm->FreeThinningData();
                 } // END ALGORITHMS FOR
             } // END FILES FOR.
@@ -339,14 +341,14 @@ void ThebeTests::AverageTest()
             // Save middle results if necessary (flag 'average_save_middle_tests' enabled)
             if (cfg_.average_save_middle_tests) {
                 string output_middle_results_file = (output_middle_results_path / path(dataset_name + middle_results_suffix + "_" + to_string(test) + ".txt")).string();
-                if (!SaveBroadOutputResults(current_res, output_middle_results_file, labels, filenames, cfg_.ccl_average_algorithms)) {
+                if (!SaveBroadOutputResults(current_res, output_middle_results_file, filenames, cfg_.thin_average_algorithms)) {
                     ob.Cwarning("Unable to save middle results for 'average test'");
                 }
             }
         } // END TEST FOR
 
         // To write in a file min results
-        if (!SaveBroadOutputResults(min_res, output_broad_path.string(), labels, filenames, cfg_.ccl_average_algorithms)) {
+        if (!SaveBroadOutputResults(min_res, output_broad_path.string(), filenames, cfg_.thin_average_algorithms)) {
             ob.Cwarning("Unable to save min results for 'average test'");
         }
 
@@ -361,13 +363,13 @@ void ThebeTests::AverageTest()
         }
 
         average_os << "#Algorithm" << '\t' << "Average" << '\t' << "Round Average for Graphs" << '\n';
-        for (unsigned i = 0; i < cfg_.ccl_average_algorithms.size(); ++i) {
+        for (unsigned i = 0; i < cfg_.thin_average_algorithms.size(); ++i) {
             // For all the Algorithms in the array
-            const auto& algo_name = cfg_.ccl_average_algorithms[i];
-
+            const auto& algo_struct = cfg_.thin_average_algorithms[i];
+            
             // Gnuplot requires double-escaped name in presence of underscores
             {
-                string algo_name_double_escaped = algo_name;
+                string algo_name_double_escaped = algo_struct.display_name;
                 std::size_t found = algo_name_double_escaped.find_first_of("_");
                 while (found != std::string::npos) {
                     algo_name_double_escaped.insert(found, "\\\\");
@@ -501,7 +503,7 @@ void ThebeTests::AverageTestWithSteps()
         }
 
         // Initialize results container
-        average_ws_results_[dataset_name] = Mat1d(static_cast<unsigned>(cfg_.ccl_average_ws_algorithms.size()), StepType::ST_SIZE, numeric_limits<double>::max());
+        average_ws_results_[dataset_name] = Mat1d(static_cast<unsigned>(cfg_.thin_average_ws_algorithms.size()), StepType::ST_SIZE, numeric_limits<double>::max());
 
         // To save list of filename on which CLLAlgorithms must be tested
         vector<pair<string, bool>> filenames;  // first: filename, second: state of filename (find or not)
@@ -516,9 +518,10 @@ void ThebeTests::AverageTestWithSteps()
         // To save middle/min and average results;
         map<String, Mat1d> current_res;
         map<String, Mat1d> min_res;
-        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.ccl_average_ws_algorithms.size()), 0);
+        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.thin_average_ws_algorithms.size()), 0);
 
-        for (const auto& algo_name : cfg_.ccl_average_ws_algorithms) {
+        for (const auto& algo_struct : cfg_.thin_average_ws_algorithms) {
+            const auto& algo_name = algo_struct.test_name;
             current_res[algo_name] = Mat1d(filenames_size, StepType::ST_SIZE, numeric_limits<double>::max());
             min_res[algo_name] = Mat1d(filenames_size, StepType::ST_SIZE, numeric_limits<double>::max());
         }
@@ -533,9 +536,11 @@ void ThebeTests::AverageTestWithSteps()
         }
 
         map<String, unsigned> algo_pos;
-        for (size_t i = 0; i < cfg_.ccl_average_ws_algorithms.size(); ++i)
-            algo_pos[cfg_.ccl_average_ws_algorithms[i]] = static_cast<unsigned>(i);
-        auto shuffled_ccl_average_ws_algorithms = cfg_.ccl_average_ws_algorithms;
+        vector<String> shuffled_thin_average_ws_algorithms(cfg_.thin_average_ws_algorithms.size());
+        for (size_t i = 0; i < cfg_.thin_average_ws_algorithms.size(); ++i) {
+            algo_pos[cfg_.thin_average_ws_algorithms[i].test_name] = static_cast<unsigned>(i);
+            shuffled_thin_average_ws_algorithms[i] = cfg_.thin_average_ws_algorithms[i].test_name;
+        }
 
         // Test is executed n_test times
         for (unsigned test = 0; test < cfg_.average_ws_tests_number; ++test) {
@@ -553,10 +558,10 @@ void ThebeTests::AverageTestWithSteps()
                     continue;
                 }
 
-                random_shuffle(begin(shuffled_ccl_average_ws_algorithms), end(shuffled_ccl_average_ws_algorithms));
+                random_shuffle(begin(shuffled_thin_average_ws_algorithms), end(shuffled_thin_average_ws_algorithms));
 
                 // For all the Algorithms in the array
-                for (const auto& algo_name : shuffled_ccl_average_ws_algorithms) {
+                for (const auto& algo_name : shuffled_thin_average_ws_algorithms) {
                     Thinning *algorithm = ThinningMapSingleton::GetThinning(algo_name);
                     unsigned i = algo_pos[algo_name];
 
@@ -589,19 +594,20 @@ void ThebeTests::AverageTestWithSteps()
             // Save middle results if necessary (flag 'average_save_middle_tests' enabled)
             if (cfg_.average_ws_save_middle_tests) {
                 string output_middle_results_file = (output_middle_results_path / path(dataset_name + middle_results_suffix + "_" + to_string(test) + ".txt")).string();
-                SaveBroadOutputResults(current_res, output_middle_results_file, labels, filenames, cfg_.ccl_average_ws_algorithms);
+                SaveBroadOutputResults(current_res, output_middle_results_file, filenames, cfg_.thin_average_ws_algorithms);
             }
         }// END TESTS FOR
 
         // To write in a file min results
-        SaveBroadOutputResults(min_res, output_broad_path.string(), labels, filenames, cfg_.ccl_average_ws_algorithms);
+        SaveBroadOutputResults(min_res, output_broad_path.string(), filenames, cfg_.thin_average_ws_algorithms);
 
         // If true the i-th step is used by all the algorithms
         vector<bool> steps_presence(StepType::ST_SIZE, false);
 
         // To calculate average times and write it on the specified file
-        for (unsigned a = 0; a < cfg_.ccl_average_ws_algorithms.size(); ++a) {
-            const auto& algo_name(cfg_.ccl_average_ws_algorithms[a]);
+        for (unsigned a = 0; a < cfg_.thin_average_ws_algorithms.size(); ++a) {
+            const auto& algo_struct(cfg_.thin_average_ws_algorithms[a]);
+            const auto& algo_name = algo_struct.test_name;
             vector<pair<double, uint16_t>> supp_average(StepType::ST_SIZE, make_pair(0.0, 0));
 
             for (int r = 0; r < min_res.at(algo_name).rows; ++r) {
@@ -752,7 +758,7 @@ void ThebeTests::DensityTest()
         null_results_suffix = "_null_results.txt";
 
     // Initialize results container
-    density_results_ = cv::Mat1d(static_cast<unsigned>(cfg_.density_datasets.size()), static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), std::numeric_limits<double>::max());
+    density_results_ = cv::Mat1d(static_cast<unsigned>(cfg_.density_datasets.size()), static_cast<unsigned>(cfg_.thin_average_algorithms.size()), std::numeric_limits<double>::max());
 
     for (unsigned d = 0; d < cfg_.density_datasets.size(); ++d) { // For every dataset in the density list
         String dataset_name(cfg_.density_datasets[d]),
@@ -779,14 +785,7 @@ void ThebeTests::DensityTest()
             continue;
         }
 
-        // TODO: remove color labels from this test
-        if (cfg_.density_color_labels) {
-            if (!create_directories(output_colored_images_path)) {
-                ob.Cwarning("Unable to find/create the output path '" + output_colored_images_path.string() + "', colored images won't be saved");
-            }
-        }
-
-        // To save list of filename on which CLLAlgorithms must be tested
+        // To save list of filename on which thinning algorithms must be tested
         vector<pair<string, bool>> filenames;  // first: filename, second: state of filename (find or not)
         if (!LoadFileList(filenames, is_path)) {
             ob.Cwarning("Unable to open '" + is_path.string() + "'", dataset_name);
@@ -801,9 +800,9 @@ void ThebeTests::DensityTest()
         unsigned filenames_size = static_cast<unsigned>(filenames.size());
 
         // To save middle/min and average results;
-        Mat1d min_res(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), numeric_limits<double>::max());
-        Mat1d current_res(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), numeric_limits<double>::max());
-        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), 0);
+        Mat1d min_res(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), numeric_limits<double>::max());
+        Mat1d current_res(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), numeric_limits<double>::max());
+        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), 0);
 
         /*
         Note that number of random_images is less than 800, this is why the second element of the
@@ -836,8 +835,8 @@ void ThebeTests::DensityTest()
         uint8_t density = 9 /*[0.1,0.9]*/, size = 8 /*[32,64,128,256,512,1024,2048,4096]*/;
 
         using vvp = vector<vector<pair<double, uint16_t>>>;
-        vvp supp_density(cfg_.ccl_average_algorithms.size(), vector<pair<double, uint16_t>>(density, make_pair(0, 0)));
-        vvp supp_size(cfg_.ccl_average_algorithms.size(), vector<pair<double, uint16_t>>(size, make_pair(0, 0)));
+        vvp supp_density(cfg_.thin_average_algorithms.size(), vector<pair<double, uint16_t>>(density, make_pair(0, 0)));
+        vvp supp_size(cfg_.thin_average_algorithms.size(), vector<pair<double, uint16_t>>(size, make_pair(0, 0)));
 
         // Start output message box
         ob.StartRepeatedBox(dataset_name, filenames_size, cfg_.density_tests_number);
@@ -849,10 +848,12 @@ void ThebeTests::DensityTest()
         }
 
         map<String, unsigned> algo_pos;
-        for (size_t i = 0; i < cfg_.ccl_average_algorithms.size(); ++i)
-            algo_pos[cfg_.ccl_average_algorithms[i]] = static_cast<unsigned>(i);
-        auto shuffled_ccl_average_algorithms = cfg_.ccl_average_algorithms;
-
+        vector<String> shuffled_thin_average_algorithms(cfg_.thin_average_algorithms.size());
+        for (size_t i = 0; i < cfg_.thin_average_algorithms.size(); ++i) {
+            algo_pos[cfg_.thin_average_algorithms[i].test_name] = static_cast<unsigned>(i);
+            shuffled_thin_average_algorithms[i] = cfg_.thin_average_algorithms[i].test_name;
+        }
+        
         // Test is executed n_test times
         for (unsigned test = 0; test < cfg_.density_tests_number; ++test) {
             // For every file in list
@@ -869,9 +870,9 @@ void ThebeTests::DensityTest()
                     continue;
                 }
 
-                random_shuffle(begin(shuffled_ccl_average_algorithms), end(shuffled_ccl_average_algorithms));
+                random_shuffle(begin(shuffled_thin_average_algorithms), end(shuffled_thin_average_algorithms));
 
-                for (const auto& algo_name : shuffled_ccl_average_algorithms) {
+                for (const auto& algo_name : shuffled_thin_average_algorithms) {
                     Thinning *algorithm = ThinningMapSingleton::GetThinning(algo_name);
                     unsigned i = algo_pos[algo_name];
 
@@ -900,14 +901,14 @@ void ThebeTests::DensityTest()
             // Save middle results if necessary (flag 'density_save_middle_tests' enabled)
             if (cfg_.density_save_middle_tests) {
                 string output_middle_results_file = (output_middle_results_path / path(dataset_name + middle_results_suffix + "_" + to_string(test) + ".txt")).string();
-                SaveBroadOutputResults(current_res, output_middle_results_file, labels, filenames, cfg_.ccl_average_algorithms);
+                SaveBroadOutputResults(current_res, output_middle_results_file, filenames, cfg_.thin_average_algorithms);
             }
         } // END TEST FOR
 
         // To write in a file min results
-        SaveBroadOutputResults(min_res, output_broad_path.string(), labels, filenames, cfg_.ccl_average_algorithms);
+        SaveBroadOutputResults(min_res, output_broad_path.string(), filenames, cfg_.thin_average_algorithms);
 
-        // To sum min results, in the correct manner, before make average
+        // To sum min results in the correct manner before making average
         for (unsigned files = 0; files < filenames.size(); ++files) {
             // Note that files correspond to min_res rows
             for (int c = 0; c < min_res.cols; ++c) {
@@ -929,10 +930,10 @@ void ThebeTests::DensityTest()
         }
 
         // To calculate average times
-        vector<vector<long double>> density_average(cfg_.ccl_average_algorithms.size(), vector<long double>(density));
-        vector<vector<long double>> size_average(cfg_.ccl_average_algorithms.size(), vector<long double>(size));
+        vector<vector<long double>> density_average(cfg_.thin_average_algorithms.size(), vector<long double>(density));
+        vector<vector<long double>> size_average(cfg_.thin_average_algorithms.size(), vector<long double>(size));
 
-        for (unsigned i = 0; i < cfg_.ccl_average_algorithms.size(); ++i) {
+        for (unsigned i = 0; i < cfg_.thin_average_algorithms.size(); ++i) {
             // For all algorithms
             for (unsigned j = 0; j < density_average[i].size(); ++j) {
                 // For all density and normalized density
@@ -967,9 +968,9 @@ void ThebeTests::DensityTest()
 
         density_os << "# density";
         size_os << "# size";
-        for (const auto& algo_name : cfg_.ccl_average_algorithms) {
-            density_os << '\t' << algo_name;
-            size_os << '\t' << algo_name;
+        for (const auto& algo_struct : cfg_.thin_average_algorithms) {
+            density_os << '\t' << algo_struct.display_name;
+            size_os << '\t' << algo_struct.display_name;
         }
         density_os << '\n';
         size_os << '\n';
@@ -1042,8 +1043,8 @@ void ThebeTests::DensityTest()
             script_os << "set ylabel \"Execution Time [ms]\"" << '\n' << '\n';
 
             script_os << "# Get stats to set labels" << '\n';
-            script_os << "stats[1:" << cfg_.ccl_average_algorithms.size() << "] '" + output_density_results + "' matrix name 'density' noout" << '\n';
-            script_os << "stats[1:" << cfg_.ccl_average_algorithms.size() << "] '" + output_size_results + "' matrix name 'size' noout" << '\n';
+            script_os << "stats[1:" << cfg_.thin_average_algorithms.size() << "] '" + output_density_results + "' matrix name 'density' noout" << '\n';
+            script_os << "stats[1:" << cfg_.thin_average_algorithms.size() << "] '" + output_size_results + "' matrix name 'size' noout" << '\n';
             script_os << "ymax = density_max + (density_max / 100) * 10" << '\n';
             script_os << "ymin = density_min - (density_min / 100) * 10" << '\n';
 
@@ -1057,12 +1058,12 @@ void ThebeTests::DensityTest()
 
             script_os << "# Plot" << '\n';
             script_os << "plot \\" << '\n';
-            vector<String>::iterator it; // I need it after the cycle
+            vector<AlgorithmNames>::iterator it; // I need it after the cycle
             unsigned i = 2;
-            for (it = cfg_.ccl_average_algorithms.begin(); it != (cfg_.ccl_average_algorithms.end() - 1); ++it, ++i) {
-                script_os << "\"" + output_density_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string(*it)) + "\" , \\" << '\n';
+            for (it = cfg_.thin_average_algorithms.begin(); it != (cfg_.thin_average_algorithms.end() - 1); ++it, ++i) {
+                script_os << "\"" + output_density_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string((*it).display_name)) + "\" , \\" << '\n';
             }
-            script_os << "\"" + output_density_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string(*it)) + "\"" << '\n' << '\n';
+            script_os << "\"" + output_density_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string((*it).display_name)) + "\"" << '\n' << '\n';
 
             script_os << "# Replot in latex folder" << '\n';
             script_os << "set title \"\"" << '\n' << '\n';
@@ -1109,10 +1110,10 @@ void ThebeTests::DensityTest()
             script_os << "# Plot" << '\n';
             script_os << "plot \\" << '\n';
             i = 2;
-            for (it = cfg_.ccl_average_algorithms.begin(); it != (cfg_.ccl_average_algorithms.end() - 1); ++it, ++i) {
-                script_os << "\"" + output_size_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string(*it)) + "\" , \\" << '\n';
+            for (it = cfg_.thin_average_algorithms.begin(); it != (cfg_.thin_average_algorithms.end() - 1); ++it, ++i) {
+                script_os << "\"" + output_size_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string((*it).display_name)) + "\" , \\" << '\n';
             }
-            script_os << "\"" + output_size_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string(*it)) + "\"" << '\n' << '\n';
+            script_os << "\"" + output_size_results + "\" using 1:" << i << " with linespoints title \"" + DoubleEscapeUnderscore(string((*it).display_name)) + "\"" << '\n' << '\n';
 
             script_os << "# Replot in latex folder" << '\n';
             script_os << "set title \"\"" << '\n';
@@ -1188,11 +1189,11 @@ void ThebeTests::GranularityTest()
         uint8_t granularity = 16; // For granularity tests granularity ranges from 1 to 16 with fixed step 1
 
         // Initialize results container
-        granularity_results_[dataset_name] = cv::Mat(cv::Size(static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), density), CV_64FC(granularity), cv::Scalar(0)); // To store minimum values 
+        granularity_results_[dataset_name] = cv::Mat(cv::Size(static_cast<unsigned>(cfg_.thin_average_algorithms.size()), density), CV_64FC(granularity), cv::Scalar(0)); // To store minimum values 
         vector<vector<double>> real_densities(granularity, vector<double>(density));
-        Mat1d min_res(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), numeric_limits<double>::max());
-        Mat1d current_res(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), numeric_limits<double>::max()); // To store current result
-        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.ccl_average_algorithms.size()), 0); // To count number of labels for every image and algorithm 
+        Mat1d min_res(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), numeric_limits<double>::max());
+        Mat1d current_res(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), numeric_limits<double>::max()); // To store current result
+        Mat1i labels(filenames_size, static_cast<unsigned>(cfg_.thin_average_algorithms.size()), 0); // To count number of labels for every image and algorithm 
 
         // Start output message box
         ob.StartRepeatedBox(dataset_name, filenames_size, cfg_.granularity_tests_number);
@@ -1204,9 +1205,11 @@ void ThebeTests::GranularityTest()
         }
 
         map<String, unsigned> algo_pos;
-        for (size_t i = 0; i < cfg_.ccl_average_algorithms.size(); ++i)
-            algo_pos[cfg_.ccl_average_algorithms[i]] = static_cast<unsigned>(i);
-        auto shuffled_ccl_average_algorithms = cfg_.ccl_average_algorithms;
+        vector<String> shuffled_thin_average_algorithms(cfg_.thin_average_algorithms.size());
+        for (size_t i = 0; i < cfg_.thin_average_algorithms.size(); ++i) {
+            algo_pos[cfg_.thin_average_algorithms[i].test_name] = static_cast<unsigned>(i);
+            shuffled_thin_average_algorithms[i] = cfg_.thin_average_algorithms[i].test_name;
+        }
 
         random_shuffle(begin(filenames), end(filenames));
 
@@ -1232,9 +1235,9 @@ void ThebeTests::GranularityTest()
 
                 int nonzero = countNonZero(Thinning::img_);
                 real_densities[cur_granularity - 1][cur_density] = 100.0 * nonzero / (Thinning::img_.rows*Thinning::img_.cols);
-                random_shuffle(begin(shuffled_ccl_average_algorithms), end(shuffled_ccl_average_algorithms));
+                random_shuffle(begin(shuffled_thin_average_algorithms), end(shuffled_thin_average_algorithms));
 
-                for (const auto& algo_name : shuffled_ccl_average_algorithms) {
+                for (const auto& algo_name : shuffled_thin_average_algorithms) {
                     Thinning *algorithm = ThinningMapSingleton::GetThinning(algo_name);
                     unsigned i = algo_pos[algo_name];
 
@@ -1263,12 +1266,12 @@ void ThebeTests::GranularityTest()
             // Save middle results if necessary
             if (cfg_.granularity_save_middle_tests) {
                 string output_middle_results_file = (output_middle_results_path / path(dataset_name + middle_results_suffix + "_" + to_string(test) + ".txt")).string();
-                SaveBroadOutputResults(current_res, output_middle_results_file, labels, filenames, cfg_.ccl_average_algorithms);
+                SaveBroadOutputResults(current_res, output_middle_results_file, filenames, cfg_.thin_average_algorithms);
             }
         } // END TEST FOR
 
         // To write the min results into a file
-        SaveBroadOutputResults(min_res, output_broad_path.string(), labels, filenames, cfg_.ccl_average_algorithms);
+        SaveBroadOutputResults(min_res, output_broad_path.string(), filenames, cfg_.thin_average_algorithms);
 
         for (int r = 0; r < min_res.rows; ++r) {
             if (filenames[r].second) {
@@ -1316,14 +1319,14 @@ void ThebeTests::GranularityTest()
             }
 
             granularity_os << "# density" << '\t';
-            for (const auto& algo : cfg_.ccl_average_algorithms) {
-                granularity_os << algo << '\t';
+            for (const auto& algo_struct : cfg_.thin_average_algorithms) {
+                granularity_os << algo_struct.display_name << '\t';
             }
             granularity_os << '\n';
 
             for (unsigned d = 0; d < density; ++d) {
                 granularity_os << std::fixed << std::setprecision(5) << /*real_densities[g - 1][d]*/ d << '\t';
-                for (unsigned a = 0; a < cfg_.ccl_average_algorithms.size(); ++a) {
+                for (unsigned a = 0; a < cfg_.thin_average_algorithms.size(); ++a) {
                     granularity_os << std::fixed << std::setprecision(8) << (granularity_results_[dataset_name].at<Vec<double, 16>>(d, a)[g - 1] / 10.0) << '\t';
                 }
                 granularity_os << '\n';
@@ -1370,7 +1373,7 @@ void ThebeTests::GranularityTest()
             script_os << "set ylabel \"Execution Time [ms]\"" << '\n' << '\n';
 
             script_os << "# Get stats to set labels" << '\n';
-            script_os << "stats[1:" << cfg_.ccl_average_algorithms.size() << "] input_file matrix name 'granularity' noout" << '\n';
+            script_os << "stats[1:" << cfg_.thin_average_algorithms.size() << "] input_file matrix name 'granularity' noout" << '\n';
             script_os << " ymax = granularity_max + (granularity_max / 100) * 10" << '\n';
             script_os << " ymin = granularity_min - (granularity_min / 100) * 10" << '\n';
 
@@ -1384,12 +1387,12 @@ void ThebeTests::GranularityTest()
 
             script_os << "# Plot" << '\n';
             script_os << "plot \\" << '\n';
-            vector<String>::iterator it; // I need it after the cycle
+            vector<AlgorithmNames>::iterator it; // I need it after the cycle
             unsigned i = 2;
-            for (it = cfg_.ccl_average_algorithms.begin(); it != (cfg_.ccl_average_algorithms.end() - 1); ++it, ++i) {
-                script_os << "input_file" << " using 1:" << i << " with lines title \"" + DoubleEscapeUnderscore(string(*it)) + "\" , \\" << '\n';
+            for (it = cfg_.thin_average_algorithms.begin(); it != (cfg_.thin_average_algorithms.end() - 1); ++it, ++i) {
+                script_os << "input_file" << " using 1:" << i << " with lines title \"" + DoubleEscapeUnderscore(string((*it).display_name)) + "\" , \\" << '\n';
             }
-            script_os << "input_file" << " using 1:" << i << " with lines title \"" + DoubleEscapeUnderscore(string(*it)) + "\"" << '\n' << '\n';
+            script_os << "input_file" << " using 1:" << i << " with lines title \"" + DoubleEscapeUnderscore(string((*it).display_name)) + "\"" << '\n' << '\n';
 
             script_os << "# Replot in latex folder" << '\n';
             script_os << "set title \"\"" << '\n' << '\n';
@@ -1467,7 +1470,7 @@ void ThebeTests::MemoryTest()
 
         // Initialize results container
         // To store average memory accesses (one column for every data_ structure type: col 1 -> BINARY_MAT, col 2 -> LABELED_MAT, col 3 -> EQUIVALENCE_VET, col 0 -> OTHER)
-        memory_accesses_[dataset_name] = Mat1d(Size(MD_SIZE, static_cast<unsigned>(cfg_.ccl_mem_algorithms.size())), 0.0);
+        memory_accesses_[dataset_name] = Mat1d(Size(MD_SIZE, static_cast<unsigned>(cfg_.thin_mem_algorithms.size())), 0.0);
 
         // Start output message box
         ob.StartUnitaryBox(dataset_name, filenames_size);
@@ -1489,8 +1492,8 @@ void ThebeTests::MemoryTest()
             ++tot_test;
 
             // For all the Algorithms in the array
-            for (unsigned i = 0; i < cfg_.ccl_mem_algorithms.size(); ++i) {
-                Thinning *algorithm = ThinningMapSingleton::GetThinning(cfg_.ccl_mem_algorithms[i]);
+            for (unsigned i = 0; i < cfg_.thin_mem_algorithms.size(); ++i) {
+                Thinning *algorithm = ThinningMapSingleton::GetThinning(cfg_.thin_mem_algorithms[i].test_name);
 
                 // The following data_ structure is used to get the memory access matrices
                 vector<uint64_t> accesses; // Rows represents algorithms and columns represent data_ structures
@@ -1500,7 +1503,7 @@ void ThebeTests::MemoryTest()
                 }
                 catch (const exception& e) {
                     algorithm->FreeThinningData();
-                    ob.Cerror("Something wrong with " + cfg_.ccl_mem_algorithms[i] + ": " + e.what()); // You should check your algorithms' implementation before performing THeBE tests  
+                    ob.Cerror("Something wrong with " + cfg_.thin_mem_algorithms[i].test_name + ": " + e.what()); // You should check your algorithms' implementation before performing THeBE tests  
                 }
 
                 // For every data_ structure "returned" by the algorithm
@@ -1522,9 +1525,9 @@ void ThebeTests::MemoryTest()
         os << "#" << dataset_name << '\n';
         os << "Algorithm\tBinary Image\tLabel Image\tEquivalence Vector/s\tOther\tTotal Accesses" << '\n';
 
-        for (unsigned a = 0; a < cfg_.ccl_mem_algorithms.size(); ++a) {
+        for (unsigned a = 0; a < cfg_.thin_mem_algorithms.size(); ++a) {
             double total_accesses{ 0.0 };
-            os << cfg_.ccl_mem_algorithms[a] << '\t';
+            os << cfg_.thin_mem_algorithms[a].display_name << '\t';
             for (int col = 0; col < memory_accesses_[dataset_name].cols; ++col) {
                 os << std::fixed << std::setprecision(0) << memory_accesses_[dataset_name](a, col);
                 os << '\t';
@@ -1578,15 +1581,15 @@ void ThebeTests::LatexGenerator()
         os << "\t\\caption{Average Results in ms (Lower is better)}" << '\n';
         os << "\t\\label{tab:table1}" << '\n';
         os << "\t\\begin{tabular}{|l|";
-        for (unsigned i = 0; i < cfg_.ccl_average_algorithms.size(); ++i)
+        for (unsigned i = 0; i < cfg_.thin_average_algorithms.size(); ++i)
             os << "S[table-format=2.3]|";
         os << "}" << '\n';
         os << "\t\\hline" << '\n';
         os << '\t';
-        for (unsigned i = 0; i < cfg_.ccl_average_algorithms.size(); ++i) {
+        for (unsigned i = 0; i < cfg_.thin_average_algorithms.size(); ++i) {
             //RemoveCharacter(datasets_name, '\\');
             //datasets_name.erase(std::remove(datasets_name.begin(), datasets_name.end(), '\\'), datasets_name.end());
-            os << " & {" << EscapeUnderscore(cfg_.ccl_average_algorithms[i]) << "}"; //Header
+            os << " & {" << EscapeUnderscore(cfg_.thin_average_algorithms[i].display_name) << "}"; //Header
         }
         os << "\\\\" << '\n';
         os << "\t\\hline" << '\n';
@@ -1739,9 +1742,9 @@ void ThebeTests::LatexGenerator()
             os << "\\\\" << '\n';
             os << "\t\\hline" << '\n';
 
-            for (unsigned i = 0; i < cfg_.ccl_mem_algorithms.size(); ++i) {
+            for (unsigned i = 0; i < cfg_.thin_mem_algorithms.size(); ++i) {
                 // For every algorithm escape the underscore
-                const String& alg_name = EscapeUnderscore(cfg_.ccl_mem_algorithms[i]);
+                const String& alg_name = EscapeUnderscore(cfg_.thin_mem_algorithms[i].display_name);
                 //RemoveCharacter(alg_name, '\\');
                 os << "\t{" << alg_name << "}";
 

@@ -103,53 +103,53 @@ int main()
     /*  Configuration parameters check                                       */
     /*************************************************************************/
 
-    // Check if check algo list is correct
-    if (cfg.perform_correctness && (cfg.ccl_algorithms.size() != cfg.ccl_check_algorithms.size())) {
-        ob_setconf.Cwarning("check_algorithms list mismatch algorithm list. Correctness test disabled.");
-        cfg.perform_correctness = false;
-    }
+    //// Check if check algo list is correct
+    //if (cfg.perform_correctness && (cfg.thin_algorithms.size() != cfg.thin_check_algorithms.size())) {
+    //    ob_setconf.Cwarning("check_algorithms list mismatch algorithm list. Correctness test disabled.");
+    //    cfg.perform_correctness = false;
+    //}
 
     // Check if all the specified algorithms exist
-    for (size_t i = 0; i < cfg.ccl_algorithms.size(); ++i) {
-        string algo_name = cfg.ccl_algorithms[i];
+    for (size_t i = 0; i < cfg.thin_algorithms.size(); ++i) {
+        auto& algo_struct = cfg.thin_algorithms[i];
+        string algo_name = algo_struct.test_name;
+         
         if (!ThinningMapSingleton::Exists(algo_name)) {
             ob_setconf.Cwarning("Unable to find the algorithm '" + algo_name + "'");
         }
         else {
-            cfg.ccl_existing_algorithms.push_back(algo_name);
+            cfg.thin_existing_algorithms.push_back(algo_struct);
             if (cfg.perform_correctness) {
-                string check_algo_name = cfg.ccl_check_algorithms[i];
+                string check_algo_name = algo_struct.test_name;
                 if (!ThinningMapSingleton::Exists(check_algo_name)) {
                     ob_setconf.Cwarning("Unable to find the check algorithm '" + check_algo_name + "'. Correctness test disabled.");
                     cfg.perform_correctness = false;
-                }
-                else {
-                    cfg.ccl_check_existing_algorithms.push_back(check_algo_name);
                 }
             }
         }
     }
 
-    if (cfg.ccl_existing_algorithms.size() == 0) {
+    if (cfg.thin_existing_algorithms.size() == 0) {
         ob_setconf.Cerror("There are no valid values in the 'algorithms' list");
     }
 
     // Check if labeling methods of the specified algorithms exist
     Thinning::img_ = Mat1b(1, 1, static_cast<uchar>(0));
-    for (size_t i = 0; i < cfg.ccl_existing_algorithms.size(); ++i) {
-        string algo_name = cfg.ccl_existing_algorithms[i];
+    for (size_t i = 0; i < cfg.thin_existing_algorithms.size(); ++i) {
+        auto& algo_struct = cfg.thin_existing_algorithms[i];
+        string algo_name = algo_struct.test_name;
         const auto& algorithm = ThinningMapSingleton::GetThinning(algo_name);
         if (cfg.perform_average || cfg.perform_density || cfg.perform_granularity || (cfg.perform_correctness && cfg.perform_check_std)) {
             try {
                 algorithm->PerformThinning();
-                cfg.ccl_average_algorithms.push_back(algo_name);
+                cfg.thin_average_algorithms.push_back(algo_struct);
 
                 if (cfg.perform_correctness && cfg.perform_check_std) {
-                    string check_algo_name = cfg.ccl_check_existing_algorithms[i];
+                    string check_algo_name = algo_struct.check_name;
                     const auto& check_algorithm = ThinningMapSingleton::GetThinning(check_algo_name);
                     try {
                         check_algorithm->PerformThinning();
-                        cfg.ccl_check_average_algorithms.push_back(check_algo_name);
+                        // The check name has already been pushed. If it doesn't work properly standard correctness test is disabled (see catch below)
                     }
                     catch (const runtime_error& e) {
                         ob_setconf.Cwarning(check_algo_name + ": " + e.what());
@@ -165,14 +165,14 @@ int main()
         if (cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_ws)) {
             try {
                 algorithm->PerformThinningWithSteps();
-                cfg.ccl_average_ws_algorithms.push_back(algo_name);
+                cfg.thin_average_ws_algorithms.push_back(algo_struct);
 
                 if (cfg.perform_correctness && cfg.perform_check_ws) {
-                    string check_algo_name = cfg.ccl_check_existing_algorithms[i];
+                    string check_algo_name = algo_struct.check_name;
                     const auto& check_algorithm = ThinningMapSingleton::GetThinning(check_algo_name);
                     try {
                         check_algorithm->PerformThinningWithSteps();
-                        cfg.ccl_check_average_ws_algorithms.push_back(check_algo_name);
+                        // The check name has already been pushed. If it doesn't work properly steps correctness test is disabled (see catch below)
                     }
                     catch (const runtime_error& e) {
                         ob_setconf.Cwarning(check_algo_name + ": " + e.what());
@@ -189,14 +189,14 @@ int main()
             try {
                 vector<uint64_t> temp;
                 algorithm->PerformThinningMem(temp);
-                cfg.ccl_mem_algorithms.push_back(algo_name);
+                cfg.thin_mem_algorithms.push_back(algo_struct);
 
                 if (cfg.perform_correctness && cfg.perform_check_mem) {
-                    string check_algo_name = cfg.ccl_check_existing_algorithms[i];
+                    string check_algo_name = algo_struct.check_name;
                     const auto& check_algorithm = ThinningMapSingleton::GetThinning(check_algo_name);
                     try {
                         check_algorithm->PerformThinningMem(temp);
-                        cfg.ccl_check_mem_algorithms.push_back(check_algo_name);
+                        // The check name has already been pushed. If it doesn't work properly memory correctness test is disabled (see catch below)
                     }
                     catch (const runtime_error& e) {
                         ob_setconf.Cwarning(check_algo_name + ": " + e.what());
@@ -211,19 +211,19 @@ int main()
         }
     }
 
-    if ((cfg.perform_average || (cfg.perform_correctness && cfg.perform_check_std)) && cfg.ccl_average_algorithms.size() == 0) {
+    if ((cfg.perform_average || (cfg.perform_correctness && cfg.perform_check_std)) && cfg.thin_average_algorithms.size() == 0) {
         ob_setconf.Cwarning("There are no 'algorithms' with valid 'PerformThinning()' method, related tests will be skipped");
         cfg.perform_average = false;
         cfg.perform_check_std = false;
     }
 
-    if ((cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_ws)) && cfg.ccl_average_ws_algorithms.size() == 0) {
+    if ((cfg.perform_average_ws || (cfg.perform_correctness && cfg.perform_check_ws)) && cfg.thin_average_ws_algorithms.size() == 0) {
         ob_setconf.Cwarning("There are no 'algorithms' with valid 'PerformThinningWithSteps()' method, related tests will be skipped");
         cfg.perform_average_ws = false;
         cfg.perform_check_ws = false;
     }
 
-    if ((cfg.perform_memory || (cfg.perform_correctness && cfg.perform_check_mem)) && cfg.ccl_mem_algorithms.size() == 0) {
+    if ((cfg.perform_memory || (cfg.perform_correctness && cfg.perform_check_mem)) && cfg.thin_mem_algorithms.size() == 0) {
         ob_setconf.Cwarning("There are no 'algorithms' with valid 'PerformThinningMem()' method, related tests will be skipped");
         cfg.perform_memory = false;
         cfg.perform_check_mem = false;

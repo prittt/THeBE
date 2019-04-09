@@ -55,11 +55,6 @@ const string kTerminalExtension = ".pdf";
 
 StreamDemultiplexer dmux::cout(std::cout);
 
-bool CompareLengthCvString(String const& lhs, String const& rhs)
-{
-    return lhs.size() < rhs.size();
-}
-
 void RemoveCharacter(string& s, const char c)
 {
     s.erase(std::remove(s.begin(), s.end(), c), s.end());

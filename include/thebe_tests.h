@@ -39,6 +39,11 @@
 #include "thinning_algorithms.h"
 #include "progress_bar.h"
 
+// To compare lengths of OpenCV String
+//bool CompareLengthCvString(cv::String const& lhs, cv::String const& rhs);
+// To compare lengths of OpenCV String inside AlgorithmNames data structure
+bool CompareLengthCvString(AlgorithmNames const& lhs, AlgorithmNames const& rhs);
+
 class ThebeTests {
 public:
 	ThebeTests(const ConfigData& cfg) : cfg_(cfg) {}
@@ -46,18 +51,18 @@ public:
     void CheckPerformThinning()
     {
         std::string title = "Checking Correctness of 'PerformThinning()'";
-        CheckAlgorithms(title, cfg_.ccl_average_algorithms, cfg_.ccl_check_average_algorithms, &Thinning::PerformThinning);
+        CheckAlgorithms(title, cfg_.thin_average_algorithms, &Thinning::PerformThinning);
     }
 	void CheckPerformThinningWithSteps()
     {
         std::string title = "Checking Correctness of 'PerformThinningWithSteps()' (8-Connectivity)";
-        CheckAlgorithms(title, cfg_.ccl_average_ws_algorithms, cfg_.ccl_average_ws_algorithms, &Thinning::PerformThinningWithSteps);
+        CheckAlgorithms(title, cfg_.thin_average_ws_algorithms, &Thinning::PerformThinningWithSteps);
     }
     void CheckPerformThinningMem()
     {
         std::string title = "Checking Correctness of 'PerformThinningMem()' (8-Connectivity)";
         std::vector<uint64_t> unused;
-        CheckAlgorithms(title, cfg_.ccl_mem_algorithms, cfg_.ccl_mem_algorithms, &Thinning::PerformThinningMem, unused);
+        CheckAlgorithms(title, cfg_.thin_mem_algorithms, &Thinning::PerformThinningMem, unused);
     }
 
     void AverageTest();
@@ -77,17 +82,17 @@ private:
 
     bool LoadFileList(std::vector<std::pair<std::string, bool>>& filenames, const filesystem::path& files_path);
     bool CheckFileList(const filesystem::path& base_path, std::vector<std::pair<std::string, bool>>& filenames);
-    bool SaveBroadOutputResults(std::map<cv::String, cv::Mat1d>& results, const std::string& o_filename, const cv::Mat1i& labels, const std::vector<std::pair<std::string, bool>>& filenames, const std::vector<cv::String>& ccl_algorithms);
-    bool SaveBroadOutputResults(const cv::Mat1d& results, const std::string& o_filename, const cv::Mat1i& labels, const std::vector<std::pair<std::string, bool>>& filenames, const std::vector<cv::String>& ccl_algorithms);
+    bool SaveBroadOutputResults(std::map<cv::String, cv::Mat1d>& results, const std::string& o_filename, const std::vector<std::pair<std::string, bool>>& filenames, const std::vector<AlgorithmNames>& ccl_algorithms);
+    bool SaveBroadOutputResults(const cv::Mat1d& results, const std::string& o_filename, const std::vector<std::pair<std::string, bool>>& filenames, const std::vector<AlgorithmNames>& ccl_algorithms);
     void SaveAverageWithStepsResults(const std::string& os_name, const cv::String& dataset_name, bool rounded);
 
     template <typename FnP, typename... Args>
-    void CheckAlgorithms(const std::string& title, const std::vector<cv::String>& ccl_algorithms, const std::vector<cv::String>& ccl_check_algorithms, const FnP func, Args&&... args)
+    void CheckAlgorithms(const std::string& title, const std::vector<AlgorithmNames>& thin_algorithms, const FnP func, Args&&... args)
     {
         OutputBox ob(title);
 
-        std::vector<bool> stats(ccl_algorithms.size(), true);  // True if the i-th algorithm is correct, false otherwise
-        std::vector<std::string> first_fail(ccl_algorithms.size());  // Name of the file on which algorithm fails the first time
+        std::vector<bool> stats(thin_algorithms.size(), true);  // True if the i-th algorithm is correct, false otherwise
+        std::vector<std::string> first_fail(thin_algorithms.size());  // Name of the file on which algorithm fails the first time
         bool stop = false; // True if all the algorithms are not correct
 
         for (unsigned i = 0; i < cfg_.check_datasets.size(); ++i) { // For every dataset in the check_datasets list
@@ -119,9 +124,9 @@ private:
                 }
                 
                 unsigned j = 0;
-                for (unsigned alg = 0; alg < ccl_algorithms.size(); ++alg) {
-                    string algo_name = ccl_algorithms[alg];
-                    string check_algo_name = ccl_check_algorithms[alg];
+                for (unsigned alg = 0; alg < thin_algorithms.size(); ++alg) {
+                    string algo_name = thin_algorithms[alg].test_name;
+                    string check_algo_name = thin_algorithms[alg].check_name;
 
                     // SAUF with Union-Find is the reference: labels are already "normalized"
                     Thinning *ref = ThinningMapSingleton::GetThinning(check_algo_name);
@@ -158,13 +163,13 @@ private:
             ob.StopUnitaryBox();
         }// END FOR (LIST OF DATASETS)
 
-         // To display report of correctness test
-        std::vector<std::string> messages(ccl_algorithms.size());
-        unsigned longest_name = static_cast<unsigned>(max_element(ccl_algorithms.begin(), ccl_algorithms.end(), CompareLengthCvString)->length());
+        // To display report of correctness test
+        std::vector<std::string> messages(thin_algorithms.size());
+        unsigned longest_name = static_cast<unsigned>(max_element(thin_algorithms.begin(), thin_algorithms.end(), CompareLengthCvString)->test_name.length());
 
         unsigned j = 0;
-        for (const auto& algo_name : ccl_algorithms) {
-            messages[j] = "'" + algo_name + "'" + std::string(longest_name - algo_name.size(), '-');
+        for (const auto& algo_name : thin_algorithms) {
+            messages[j] = "'" + algo_name.test_name + "'" + std::string(longest_name - algo_name.test_name.size(), '-');
             if (stats[j]) {
                 messages[j] += "-> correct!";
             }
