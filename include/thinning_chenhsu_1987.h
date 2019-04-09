@@ -57,5 +57,16 @@ public:
     PERFORM_THINNING;
 };
 
+class ChenHsuTree : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+class ChenHsuDrag : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
 #endif // !THEBE_THINNING_CHENHSU_1897_H_
 

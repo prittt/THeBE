@@ -30,6 +30,8 @@
 
 REGISTER_THINNING(ChenHsu);
 REGISTER_THINNING(ChenHsuLUT);
+REGISTER_THINNING(ChenHsuTree);
+REGISTER_THINNING(ChenHsuDrag);
 
 #define BLOCK_TO_P						\
     const uchar p2 = (block >> 1) & 1;  \
@@ -150,4 +152,116 @@ inline bool ChenHsuLUT::should_remove_1(uint16_t block)
     1,0,0,0,1,0,1,1,1,1,0,0,1,1,0,0,1,0,0,0,1,0,1,1,1,1,0,0,1,1,0,0,
     };
     return ChenHsuLUT1[block];
+}
+
+
+inline bool ChenHsuTree::thinning_iteration(cv::Mat1b& img, int iter)
+{
+    cv::Mat1b out(img.size(), 0);
+
+    auto w = img.cols;
+    auto h = img.rows;
+
+    bool modified = false;
+    for (int r = 1; r < img.rows - 1; r++) {
+        const unsigned char* const img_row = img.ptr<unsigned char>(r);
+        const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
+        const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
+        unsigned char* const out_row = out.ptr<unsigned char>(r);
+
+#define CONDITION_P1 img_row[c]
+#define CONDITION_P2 img_row_prev[c]
+#define CONDITION_P3 c+1<w && img_row_prev[c+1]
+#define CONDITION_P4 c+1<w && img_row[c+1] 
+#define CONDITION_P5 c+1<w && img_row_foll[c+1]
+#define CONDITION_P6 img_row_foll[c]
+#define CONDITION_P7 c-1>=0 && img_row_foll[c-1]
+#define CONDITION_P8 c-1>=0 && img_row[c-1]
+#define CONDITION_P9 c-1>=0 && img_row_prev[c-1]
+#define CONDITION_ITER iter
+
+#define ACTION_1 ;                  // keep0
+#define ACTION_2 out_row[c] = 1;    // keep1
+#define ACTION_3 modified = true;   // change0
+
+        for (int c = 0; c < img.cols; ++c) {
+
+#include "thinning_chenhsu_1987_tree.inc"
+
+        }
+    }
+
+    img = out;
+
+#undef CONDITION_P1
+#undef CONDITION_P2
+#undef CONDITION_P3
+#undef CONDITION_P4
+#undef CONDITION_P5
+#undef CONDITION_P6
+#undef CONDITION_P7
+#undef CONDITION_P8
+#undef CONDITION_P9
+#undef CONDITION_ITER
+
+#undef ACTION_1
+#undef ACTION_2
+#undef ACTION_3
+
+    return modified;
+}
+
+inline bool ChenHsuDrag::thinning_iteration(cv::Mat1b& img, int iter)
+{
+    cv::Mat1b out(img.size(), 0);
+
+    auto w = img.cols;
+
+    bool modified = false;
+    for (int r = 1; r < img.rows - 1; r++) {
+        const unsigned char* const img_row = img.ptr<unsigned char>(r);
+        const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
+        const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
+        unsigned char* const out_row = out.ptr<unsigned char>(r);
+
+#define CONDITION_P1 img_row[c]
+#define CONDITION_P2 img_row_prev[c]
+#define CONDITION_P3 img_row_prev[c+1]
+#define CONDITION_P4 img_row[c+1]
+#define CONDITION_P5 img_row_foll[c+1]
+#define CONDITION_P6 img_row_foll[c]
+#define CONDITION_P7 img_row_foll[c-1]
+#define CONDITION_P8 img_row[c-1]
+#define CONDITION_P9 img_row_prev[c-1]
+#define CONDITION_ITER iter
+
+#define ACTION_1 ;                  // keep0
+#define ACTION_2 out_row[c] = 1;    // keep1
+#define ACTION_3 modified = true;   // change0
+
+        int c = -1;
+        goto tree_0;
+
+#include "thinning_chenhsu_1987_drag.inc"
+
+    }
+
+    img = out;
+
+#undef CONDITION_P1
+#undef CONDITION_P2
+#undef CONDITION_P3
+#undef CONDITION_P4
+#undef CONDITION_P5
+#undef CONDITION_P6
+#undef CONDITION_P7
+#undef CONDITION_P8
+#undef CONDITION_P9
+#undef CONDITION_ITER
+
+#undef ACTION_1
+#undef ACTION_2
+#undef ACTION_3
+
+    return modified;
 }

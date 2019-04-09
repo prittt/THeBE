@@ -16,8 +16,8 @@ perform:
   
 correctness_tests: 
   standard: true
-  steps:    true
-  memory:   true
+  steps:    false
+  memory:   false
   
 # Number of tests repetitions 
 tests_number: 
@@ -40,7 +40,7 @@ tests_number:
 #      "implementation_name"
 algorithms: 
   - ZhangSuen       , ZS        ; ZhangSuenNoPtrs
-  - ZhangSuenNoPtrs , ZSNP      ; ZhangSuenNoPtrs
+#  - ZhangSuenNoPtrs , ZSNP      ; ZhangSuenNoPtrs
   - ZhangSuenLUT    , ZS_LUT    ; ZhangSuenNoPtrs
   - ZhangSuenTree   , ZS_TREE   ; ZhangSuenNoPtrs
   - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
@@ -48,6 +48,8 @@ algorithms:
   - GuoHallLUT      , GH_LUT    ; GuoHall
   - ChenHsu         , CH        ; ChenHsu
   - ChenHsuLUT      , CH_LUT    ; ChenHsu
+  - ChenHsuTree     , CH_TREE   ; ChenHsu
+  - ChenHsuDrag     , CH_DRAG   ; ChenHsu
 
 # -------------------------------------------------------------------------------------
 # Datasets to use for each test
