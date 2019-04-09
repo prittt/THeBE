@@ -47,8 +47,6 @@ struct ConfigData {
 
     bool perform_correctness;            // Whether to perform correctness tests or not
     bool perform_average;                // Whether to perform average tests or not
-    bool perform_density;                // Whether to perform density tests or not
-    bool perform_granularity;            // Whether to perform granularity tests or not
     bool perform_memory;                 // Whether to perform memory tests or not
     bool perform_average_ws;             // Whether to perform average tests with steps or not
 
@@ -56,17 +54,12 @@ struct ConfigData {
     bool perform_check_ws;              // Whether to perform correctness on PerformThinningWithSteps() functions
     bool perform_check_mem;             // Whether to perform correctness on PerformThinningMem() functions
 
-    bool average_color_labels;           // If true, labeled image from average tests will be colored and stored
-    bool density_color_labels;           // If true, labeled image from density tests will be colored and stored
+    bool output_images;                  // If true, images from tests will be stored
     bool average_save_middle_tests;      // If true, results of each average test run will be stored 
-    bool density_save_middle_tests;      // If true, results of each density test run will be stored 
-    bool granularity_save_middle_tests;  // If true, results of each granularity test run will be stored 
     bool average_ws_save_middle_tests;   // If true, results of each average test with steps run will be stored 
 
     unsigned average_tests_number;        // Reps of average tests (only the minimum will be considered)
     unsigned average_ws_tests_number;     // Reps of average tests with steps (only the minimum will be considered)
-    unsigned density_tests_number;        // Reps of density tests (only the minimum will be considered)
-    unsigned granularity_tests_number;        // Reps of density tests (only the minimum will be considered)
 
     std::string input_txt;                // File of images list
     std::string gnuplot_script_extension; // Gnuplot scripts extension
@@ -80,8 +73,6 @@ struct ConfigData {
     
     std::string average_folder;           // Folder which will store average test results
     std::string average_ws_folder;        // Folder which will store average test with steps results
-    std::string density_folder;           // Folder which will store density results
-    std::string granularity_folder;       // Folder which will store granularity results
     std::string memory_folder;            // Folder which will store memory results
 
     path output_path;                     // Path on which results are stored
@@ -90,8 +81,6 @@ struct ConfigData {
 
     std::vector<cv::String> check_datasets;       // List of datasets on which check tests will be performed
     std::vector<cv::String> memory_datasets;      // List of datasets on which memory tests will be perform
-    std::vector<cv::String> density_datasets;     // List of datasets on which density tests will be performed
-    std::vector<cv::String> granularity_datasets; // List of datasets on which granularity tests will be performed
     std::vector<cv::String> average_datasets;     // Lists of dataset on which average tests will be performed
     std::vector<cv::String> average_ws_datasets;  // Lists of dataset on which average tests whit steps will be performed
 
@@ -109,26 +98,19 @@ struct ConfigData {
         perform_correctness          = ReadBool(fs["perform"]["correctness"]);
         perform_average              = ReadBool(fs["perform"]["average"]);
         perform_average_ws           = ReadBool(fs["perform"]["average_with_steps"]);
-        perform_density              = ReadBool(fs["perform"]["density"]);
-        perform_granularity          = ReadBool(fs["perform"]["granularity"]);
         perform_memory               = ReadBool(fs["perform"]["memory"]);
 
-        perform_check_std = ReadBool(fs["correctness_tests"]["standard"]);
-        perform_check_ws  = ReadBool(fs["correctness_tests"]["steps"]);
-        perform_check_mem = ReadBool(fs["correctness_tests"]["memory"]);
+        perform_check_std            = ReadBool(fs["correctness_tests"]["standard"]);
+        perform_check_ws             = ReadBool(fs["correctness_tests"]["steps"]);
+        perform_check_mem            = ReadBool(fs["correctness_tests"]["memory"]);
 
-        average_color_labels         = ReadBool(fs["color_labels"]["average"]);
-        density_color_labels         = ReadBool(fs["color_labels"]["density"]);
+        output_images                = ReadBool(fs["output_images"]);
 
         average_save_middle_tests    = ReadBool(fs["save_middle_tests"]["average"]);
         average_ws_save_middle_tests = ReadBool(fs["save_middle_tests"]["average_with_steps"]);
-        density_save_middle_tests    = ReadBool(fs["save_middle_tests"]["density"]);
-        granularity_save_middle_tests= ReadBool(fs["save_middle_tests"]["granularity"]);
 
         average_tests_number         = static_cast<int>(fs["tests_number"]["average"]);
         average_ws_tests_number      = static_cast<int>(fs["tests_number"]["average_with_steps"]);
-        density_tests_number         = static_cast<int>(fs["tests_number"]["density"]);
-        granularity_tests_number     = static_cast<int>(fs["tests_number"]["granularity"]);
 
         input_txt                    = "files.txt";
         gnuplot_script_extension     = ".gnuplot";
@@ -147,16 +129,12 @@ struct ConfigData {
 
         average_folder               = "average_tests";
         average_ws_folder            = "average_tests_with_steps";
-        density_folder               = "density_tests";
-        granularity_folder           = "granularity";
         memory_folder                = "memory_tests";
 
         output_path                  = path(fs["paths"]["output"]) / path(GetDatetimeWithoutSpecialChars());
         input_path                   = path(fs["paths"]["input"]);
         latex_path                   = output_path / path("latex");
 
-        density_datasets             = { "classical" };
-        granularity_datasets         = { "granularity" };
         cv::read(fs["check_datasets"], check_datasets);
         cv::read(fs["average_datasets"], average_datasets);
         cv::read(fs["average_datasets_with_steps"], average_ws_datasets);

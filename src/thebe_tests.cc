@@ -254,6 +254,12 @@ void ThebeTests::AverageTest()
             continue;
         }
 
+        if (cfg_.output_images) {
+            if (!create_directories(output_colored_images_path)) {
+                ob.Cwarning("Unable to find/create the output path '" + output_colored_images_path.string() + "', colored images won't be saved");
+            }
+        }
+
         // For AVERAGE
         ofstream average_os(average_os_path.string());
         if (!average_os.is_open()) {
@@ -332,6 +338,11 @@ void ThebeTests::AverageTest()
                     if (algorithm->perf_.last() < min_res(file, i)) {
                         min_res(file, i) = algorithm->perf_.last();
                     }
+
+					if (cfg_.output_images) {
+						String colored_image = (output_colored_images_path / path(filename + "_" + algo_name + ".png")).string();
+						imwrite(colored_image, algorithm->img_out_);
+					}
 
                     algorithm->FreeThinningData();
                 } // END ALGORITHMS FOR
@@ -1661,55 +1672,6 @@ void ThebeTests::LatexGenerator()
                 os << "\t\t\\caption{" << cfg_.average_ws_datasets[i] + "}" << '\n';
                 os << "\t\t\\centering" << '\n';
                 os << "\t\t\\includegraphics[width=" + chart_width + "\\textwidth]{\\compilerName_" + average_ws_suffix + cfg_.average_ws_datasets[i] + ".pdf}" << '\n';
-                os << "\t\\end{subfigure}" << '\n' << '\n';
-            }
-            os << "\t\\caption{\\machineName \\enspace " + datetime + "}" << '\n' << '\n';
-            os << "\\end{figure}" << '\n' << '\n';
-        }
-
-        // SECTION DENSITY CHARTS  ---------------------------------------------------------------------------
-        if (cfg_.perform_density) {
-            vector<String> density_datasets{ "classical_density", "classical_size" };
-
-            os << "\\section{Density Charts}" << '\n' << '\n';
-            os << "\\begin{figure}[tbh]" << '\n' << '\n';
-            // \newcommand{ \machineName }{x86\_MSVC15.0\_Windows\_10\_64\_bit}
-            os << "\t\\newcommand{\\machineName}{";
-            os << info_to_latex << "}" << '\n';
-            // \newcommand{\compilerName}{MSVC15_0}
-            os << "\t\\newcommand{\\compilerName}{" + compiler_name + compiler_version + "}" << '\n';
-            os << "\t\\centering" << '\n';
-
-            for (unsigned i = 0; i < density_datasets.size(); ++i) {
-                os << "\t\\begin{subfigure}[tbh]{" + chart_size + "\\textwidth}" << '\n';
-                os << "\t\t\\caption{" << EscapeUnderscore(density_datasets[i]) + "}" << '\n';
-                os << "\t\t\\centering" << '\n';
-                os << "\t\t\\includegraphics[width=" + chart_width + "\\textwidth]{\\compilerName_" + density_datasets[i] + ".pdf}" << '\n';
-                os << "\t\\end{subfigure}" << '\n' << '\n';
-            }
-            os << "\t\\caption{\\machineName \\enspace " + datetime + "}" << '\n' << '\n';
-            os << "\\end{figure}" << '\n' << '\n';
-        }
-
-        // SECTION GRANULARITY CHARTS  ---------------------------------------------------------------------------
-        if (cfg_.perform_granularity) {
-            uint8_t granularity = 16;
-            string granularity_dataset_name = cfg_.granularity_datasets[0];
-
-            os << "\\section{Granularity Charts}" << '\n' << '\n';
-            os << "\\begin{figure}[tbh]" << '\n' << '\n';
-            // \newcommand{ \machineName }{x86\_MSVC15.0\_Windows\_10\_64\_bit}
-            os << "\t\\newcommand{\\machineName}{";
-            os << info_to_latex << "}" << '\n';
-            // \newcommand{\compilerName}{MSVC15_0}
-            os << "\t\\newcommand{\\compilerName}{" + compiler_name + compiler_version + "}" << '\n';
-            os << "\t\\centering" << '\n';
-
-            for (unsigned i = 1; i <= granularity; ++i) {
-                os << "\t\\begin{subfigure}[tbh]{" + chart_size + "\\textwidth}" << '\n';
-                os << "\t\t\\caption{" << granularity_dataset_name + " with blocks " << i << "x" << i << "}" << '\n';
-                os << "\t\t\\centering" << '\n';
-                os << "\t\t\\includegraphics[width=" + chart_width + "\\textwidth]{\\compilerName_" + granularity_dataset_name + '_' << i << ".pdf}" << '\n';
                 os << "\t\\end{subfigure}" << '\n' << '\n';
             }
             os << "\t\\caption{\\machineName \\enspace " + datetime + "}" << '\n' << '\n';

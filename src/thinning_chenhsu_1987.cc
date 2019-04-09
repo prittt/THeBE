@@ -106,23 +106,6 @@ inline bool ChenHsu::should_remove_1(uint16_t block)
             );
 }
 
-void ChenHsu::PerformThinning()
-{
-    cv::Mat1b img_input = img_.clone();
-    img_out_ = cv::Mat1b(img_.size());
-    // The input image should be binary 0 background, 255 foreground
-    //img_out_ /= 255;
-
-    while (true) {
-        if (!thinning_iteration_0(img_input, img_out_))
-            break;
-        if (!thinning_iteration_1(img_out_, img_input))
-            break;
-    }
-
-    img_out_ *= 255;
-}
-
 inline bool ChenHsuLUT::should_remove_0(uint16_t block)
 {
     static bool ChenHsuLUT0[512] = {
@@ -167,20 +150,4 @@ inline bool ChenHsuLUT::should_remove_1(uint16_t block)
     1,0,0,0,1,0,1,1,1,1,0,0,1,1,0,0,1,0,0,0,1,0,1,1,1,1,0,0,1,1,0,0,
     };
     return ChenHsuLUT1[block];
-}
-
-void ChenHsuLUT::PerformThinning()
-{
-    cv::Mat1b img_input = img_.clone();
-    img_out_ = cv::Mat1b(img_.size());
-    //img_out_ /= 255;
-
-    while (true) {
-        if (!thinning_iteration_0(img_input, img_out_))
-            break;
-        if (!thinning_iteration_1(img_out_, img_input))
-            break;
-    }
-
-    img_out_ *= 255;
 }

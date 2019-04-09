@@ -42,10 +42,9 @@ public:
     inline static bool should_remove_0(uint16_t block);
     inline static bool should_remove_1(uint16_t block);
 
-	THINNING_ITERATION(0)
-	THINNING_ITERATION(1)
-
-    void PerformThinning();
+    THINNING_ITERATION(0);
+    THINNING_ITERATION(1);
+    PERFORM_THINNING;
 };
 
 class GuoHallLUT : public Thinning {
@@ -53,10 +52,9 @@ public:
     inline static bool should_remove_0(uint16_t block);
     inline static bool should_remove_1(uint16_t block);
 
-    THINNING_ITERATION(0)
-    THINNING_ITERATION(1)
-
-    void PerformThinning();
+    THINNING_ITERATION(0);
+    THINNING_ITERATION(1);
+    PERFORM_THINNING;
 };
 
 #endif // !THEBE_THINNING_GUOHALL_1989_H_
