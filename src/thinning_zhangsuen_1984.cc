@@ -33,6 +33,7 @@ REGISTER_THINNING(ZhangSuenNoPtrs);
 REGISTER_THINNING(ZhangSuenLUT);
 REGISTER_THINNING(ZhangSuenTree);
 REGISTER_THINNING(ZhangSuenDrag);
+REGISTER_THINNING(ZhangSuenOpenCV);
 
 #define BLOCK_TO_P						\
     const uchar p2 = (block >> 1) & 1;  \
