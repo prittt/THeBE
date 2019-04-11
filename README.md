@@ -1,4 +1,4 @@
-# THeBE: The THinning BEnchmark <!--&nbsp;&nbsp;&nbsp; [![Build Status](https://travis-ci.org/prittt/YACCLAB.svg?branch=master)](https://travis-ci.org/prittt/YACCLAB) -->
+# THeBE: The THinning evaluation BEnchmark
 
 <p align="justify">Please include the following references when citing the YACCLAB project/dataset:</p>
 
