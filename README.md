@@ -7,7 +7,7 @@
 - <p align="justify"> Grana, Costantino; Bolelli, Federico; Baraldi, Lorenzo; Vezzani, Roberto "YACCLAB - Yet Another Connected Components Labeling Benchmark" Proceedings of the 23rd International Conference on Pattern Recognition, Cancun, Mexico, 4-8 Dec 2016. <a title="BibTex" href="http://imagelab.ing.unimore.it/files2/yacclab/YACCLAB_ICPR2016_BibTex.html">BibTex</a>. <a title="Download" href="http://imagelab.ing.unimore.it/imagelab/pubblicazioni/2016-icpr-yacclab.pdf"><img src="https://raw.githubusercontent.com/prittt/YACCLAB/master/doc/pdf_logo.png" alt="Download." /></a></p>
 -->
 <p align="justify">
-THeBE is an open source <i>C++</i> project that enables researchers to test thinning algorithms under extremely variable points of view, running and testing algorithms on a collection of datasets described below. The benchmark provides <i>correctness</i> and average run-time (<i>average</i>), 
+THeBE is an open source <i>C++</i> project that enables researchers to test thinning algorithms under extremely variable points of view, running and testing algorithms on a collection of datasets <!--described below-->. The benchmark provides <i>correctness</i> and average run-time (<i>average</i>) tests. 
 </p>
 
 ## Requirements
