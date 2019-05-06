@@ -1,20 +1,18 @@
 # THeBE: The THinning evaluation BEnchmark
 
-<p align="justify">Please include the following references when citing the YACCLAB project/dataset:</p>
+<!--<p align="justify">Please include the following references when citing the YACCLAB project/dataset:</p>
 
 - <p align="justify"> Bolelli, Federico; Cancilla, Michele; Baraldi, Lorenzo; Grana, Costantino "Towards Reliable Experiments on the Performance of Connected Components Labeling Algorithms" Journal of Real-Time Image Processing, 2018. <a title="BibTex" href="http://imagelab.ing.unimore.it/files2/yacclab/YACCLAB_JRTIP2018_BibTex.html">BibTex</a>. <a title="Download" href="https://iris.unimore.it/retrieve/handle/11380/1155728/186233/2018_JRTIP_Towards_Reliable_Experiments_on_the_Performance_of_Connected_Components_Labeling_Algorithms.pdf"><img src="https://raw.githubusercontent.com/prittt/YACCLAB/master/doc/pdf_logo.png" alt="Download." /></a></p>
 
 - <p align="justify"> Grana, Costantino; Bolelli, Federico; Baraldi, Lorenzo; Vezzani, Roberto "YACCLAB - Yet Another Connected Components Labeling Benchmark" Proceedings of the 23rd International Conference on Pattern Recognition, Cancun, Mexico, 4-8 Dec 2016. <a title="BibTex" href="http://imagelab.ing.unimore.it/files2/yacclab/YACCLAB_ICPR2016_BibTex.html">BibTex</a>. <a title="Download" href="http://imagelab.ing.unimore.it/imagelab/pubblicazioni/2016-icpr-yacclab.pdf"><img src="https://raw.githubusercontent.com/prittt/YACCLAB/master/doc/pdf_logo.png" alt="Download." /></a></p>
-
+-->
 <p align="justify">
-YACCLAB is an open source <i>C++</i> project that enables researchers to test CCL algorithms under extremely variable points of view, running and testing algorithms on a collection of datasets described below. The benchmark performs the following tests which will be described later in this readme: <i>correctness</i>, average run-time (<i>average</i>), average run-time with steps (<i>average_ws</i>), <i>density</i>, <i>size</i>, <i>granularity</i> and memory accesses (<i>memory</i>).
-
-Notice that 8-connectivity is always used in the project.
+THeBE is an open source <i>C++</i> project that enables researchers to test thinning algorithms under extremely variable points of view, running and testing algorithms on a collection of datasets described below. The benchmark provides <i>correctness</i> and average run-time (<i>average</i>), 
 </p>
 
 ## Requirements
 
-<p align="justify">To correctly install and run YACCLAB following packages, libraries and utility are needed:</p>
+<p align="justify">To correctly install and run THeBE following packages, libraries and utilities are needed:</p>
 
 - CMake 3.0.0 or higher (https://cmake.org),
 - OpenCV 3.0 or higher (http://opencv.org),
@@ -22,14 +20,14 @@ Notice that 8-connectivity is always used in the project.
 - One of your favourite IDE/compiler: Visual Studio 2013 or higher, Xcode 5.0.1, gcc 4.7 or higher, .. (with C++11 support)
 
 Notes for gnuplot:
-- on Windows system: be sure add gnuplot to system path if you want YACCLAB automatically generates charts.
-- on MacOS system: 'pdf terminal' seems to be not available due to old version of cairo, 'postscript' is used instead.
+- on Windows system: be sure of adding gnuplot to the system path to allow the automatic charts generation.
+- on MacOS system: 'pdf terminal' seems to be not available, 'postscript' is used instead.
 
 <a name="inst"></a>
 ## Installation (refer to the image below)
 
-- <p align="justify">Clone the GitHub repository (HTTPS clone URL: https://github.com/prittt/YACCLAB.git) or simply download the full master branch zip file and extract it (e.g YACCLAB folder).</p>
-- <p align="justify">Install software in YACCLAB/bin subfolder (suggested) or wherever you want using CMake (point 2 of the example image). Note that CMake should automatically find the OpenCV path whether correctly installed on your OS (3), download the YACCLAB Dataset (be sure to check the box if you want to download it (4) or to select the correct path if the dataset is already on your file system (5)), and create a C++ project for the selected IDE/compiler (7-8).</p>
+- <p align="justify">Clone the GitHub repository (HTTPS clone URL: https://github.com/prittt/THeBE.git) or simply download the full master branch zip file and extract it (e.g THeBE folder).</p>
+- <p align="justify">Install software in THeBE/bin subfolder (suggested) or wherever you want using CMake (point 2 of the example image). Note that CMake should automatically find the OpenCV path whether correctly installed on your OS (3), download the THeBE Dataset (be sure to check the box if you want to download it (4) or to select the correct path if the dataset is already on your file system (5)), and create a C++ project for the selected IDE/compiler (7-8).</p>
 
 ![Cmake](doc/readme_github.png)
 
@@ -37,6 +35,7 @@ Notes for gnuplot:
 
 - <p align="justify">Open the project, compile and run it: the work is done!</p>
 
+<!--
 ## How to include a YACCLAB algorithm into your own project?
 
 <p align="justify">If your project requires a Connected Components Labeling algorithm and you are not interested in the whole YACCLAB benchmark you can use the <i>connectedComponent</i> function of the OpenCV library which implements the BBDT and SAUF algorithms since version 3.2.</p>
@@ -230,12 +229,6 @@ algorithms:
 ```
 
 - <i>check_datasets</i>, <i>average_datasets</i>, <i>average_ws_datasets</i> and <i>memory_datasets</i> - lists of <a href="#conf">datasets</a> on which, respectively, correctness, average, average_ws and memory tests should be run:
-<!--
-- <i>check_datasets:</i> list of datasets on which CCL algorithms should be checked.
-- <i>average_datasets:</i> list of datasets on which average test should be run.
-- <i>average_ws_datasets:</i> list of datasets on which <i>average_ws</i> test should be run.
-- <i>memory_datasets:</i> list of datasets on which memory test should be run.
--->
 ```yaml
 ...
 average_datasets: ["3dpes", "fingerprints", "hamlet", "medical", "mirflickr", "tobacco800", "xdocs"]
@@ -262,37 +255,9 @@ color_labels: {average: false, density: false}
 save_middle_tests: {average: false, average_with_steps: false, density: false, granularity: false}
 ```
 
-<!-- <table>
-<tr><td width=200><b>Parameter<b></td><td width=300><b>Description</b></td></tr>
-<tr><td>perform</td><td><p align="justify">Dictionary which specifies the kind of tests to perform (<i>correctness</i>, <i>average</i>, <i>average_ws</i>, <i>density and size</i>, <i>granularity</i> and <i>memory</i>).</p></td></tr>
-<tr><td>correcteness_tests</td><td><p align="justify">Dictionary indicating the kind of correctness tests to perform.</p></td></tr>
-<tr><td>tests_number</td><td><p align="justify">Dictionary which sets the number of runs for each test available.</p></td></tr>
-<tr bgcolor=gray align=center><td colspan="2"><i>Algorithms</i></td></tr>
-<tr><td>algorithms</td><td><p align="justify">List of algorithms on which apply the chosen tests.</p></td></tr>
-<tr align=center><td colspan="2"><i>Datasets</i></td></tr>
-<tr><td>check_datasets</td><td><p align="justify">List of datasets on which CCL algorithms should be checked.</p></td></tr>
-<tr><td>average_datasets</td><td><p align="justify">List of datasets on which average test should be run.</p></td></tr>
-<tr><td>average_ws_datasets</td><td><p align="justify">List of datasets on which <i>average_ws</i> test should be run.</p></td></tr>
-<tr><td>memory_datasets</td><td><p align="justify">List of datasets on which memory test should be run.</p></td></tr>
-<tr align=center><td colspan="2"><i>Utilities</i></td></tr>
-<tr><td>paths</td><td><p align="justify">Dictionary with both input (datasets) and output (results) paths.</p></td></tr>
-<tr><td>write_n_labels</td><td><p align="justify">Whether to report the number of connected components in the output files.</p></td></tr>
-<tr><td>color_labels</td><td><p align="justify">Whether to output a colored version of labeled images during tests.</p></td></tr>
-<tr><td>save_middle_tests</td><td><p align="justify">Dictionary specifying, separately for every test, whether to save the output of single runs, or only a summary of the whole test.</p></td></tr>
-</table>
--->
-
 ## How to Extend YACCLAB with New Algorithms
 
 Work in progress.
-<!-- <p align="justify">YACCLAB has been designed with extensibility in mind, so that new resources can be easily integrated into the project. A CCL algorithm is coded with a <tt>.h</tt> header file, which declares a function implementing the algorithm, and a <tt>.cpp</tt> source file which defines the function itself. The function must follow a standard signature: its first parameter should be a const reference to an OpenCV Mat1b matrix, containing the input image, and its second parameter should be a reference to a Mat1i matrix, which shall be populated with computed labels. The function must also return an integer specifying the number of labels found in the image, included background's one. For example:</p>
-```c++
-int MyLabelingAlgorithm(const cv::Mat1b& img,cv::Mat1i &imgLabels);
-```
-<p align="justify">Making YACCLAB aware of a new algorithm requires two more steps. The new header file has to be included in <tt>labelingAlgorithms.h</tt>, which is in charge of collecting all the algorithms in YACCLAB. This file also defines a C++ map with function pointers to all implemented algorithms, which has also to be updated with the new function.</p>
-
-<p align="justify">Once an algorithm has been added to YACCLAB, it is ready to be tested and compared to the others. To include the newly added algorithm in a test, it is sufficient to include its function name in the <tt>CCLAlgorithmsFunc</tt> <a href="#conf">parameter</a> and a display name in the <tt>CCLAlgorithmsName</tt> parameter. We look at YACCLAB as a growing effort towards better reproducibility of CCL algorithms, so implementations of new and existing labeling methods are welcome.</p>
--->
 
 <a name="datasets"></a>
 ## The YACCLAB Dataset
@@ -325,431 +290,6 @@ int MyLabelingAlgorithm(const cv::Mat1b& img,cv::Mat1i &imgLabels);
 
 ## Examples of YACCLAB Output Results
 Work in progress.
-<!--
-## Results ...
-
-In this section we use  acronyms  to  refer  to  the  available  algorithms:  
-- CT  is  the  Contour  Tracing  approach  by Fu  Chang et al.<sup>[1](#CT)</sup>;
-- CCIT  is  the  algorithm  by  Wan-Yu Chang et al. <sup>[2](#CCIT)</sup>;
-- DiStefano is the algorithm in <sup>[3](#DiStefano)</sup>;
-- BBDT is the  Block  Based  with  Decision  Trees  algorithm  by  Grana et al. <sup>[4](#BBDT)</sup>;
-- LSL STD  is  the  Light  Speed  Labeling  algorithm  by Lacassagne et al. <sup>[5](#LSL_STD)</sup>;
-- SAUF  is  the  Scan  Array  Union  Find algorithm by Wu et al. <sup>[6](#SAUF)</sup>;
-- CTB is the Configuration-Transition-Based algorithm by He et al. <sup>[7](#CTB)</sup>;  
-- SBLA is the stripe-based algorithm by Zhao et al.<sup>[8](#SBLA)</sup>;
-- PRED is the Optimized Pixel Prediction by Grana et al. <sup>[9](#PRED)</sup>;
-- NULL labeling is an algorithm that defines a lower bound limit for the execution time of CCL algorithms on a given machine and dataset. As the name suggests, this algorithm does not provide the correct connected components for a given image. It only checks the pixels of that image and sets almost randomly the value of the output.
-
-SAUF and BBDT are the algorithms currently included in OpenCV.
-
-### ... on 04/21/2016
-
-<p align="justify">To  make  a  first  performance  comparison  and  to  showcase automatically  generated  charts  we  have  run  each algorithm in YACCLAB on all datasets and in three different environments:  a  Windows  PC  with  a  i7-4790  CPU  @  3.60 GHz and Microsoft Visual Studio 2013, a Linux workstation with a Xeon CPU E5-2609 v2 @ 2.50GHz and GCC 5.2, and a Intel Core Duo @ 2.8 GHz running OS~X with XCode 7.2.1. Average run-time tests, as well as density and size tests, were repeated 10 times, and for each image the minimum execution time was considered.</p>
-
-<table border="0">
-<caption><h4>Average run-time tests on a i7-4790 CPU @ 3.60 GHz with Windows and Microsoft Visual Studio 2013 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Hamlet</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/ilb14_averages_3dpes.png" alt="ilb14_3dpes" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/ilb14_averages_hamlet.png" alt="ilb14_hamlet" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/ilb14_averages_mirflickr.png" alt="ilb14_mirflickr" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/ilb14_averages_tobacco800.png" alt="ilb14_tobacco800" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Average run-time tests on a Xeon CPU E5-2609 v2 @ 2.50GHz with Linux and GCC 5.2 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Hamlet</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/softechict-nvidia_averages_3dpes.png" alt="softechict-nvidia_3dpes" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/softechict-nvidia_averages_hamlet.png" alt="softechict-nvidia_hamlet" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/softechict-nvidia_averages_mirflickr.png" alt="softechict-nvidia_mirflickr" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/softechict-nvidia_averages_tobacco800.png" alt="softechict-nvidia_tobacco800" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Average run-time tests on a Intel Core Duo @ 2.8GHz with OS~X and XCode 7.2.1 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Hamlet</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/pro_mid2009_averages_3dpes.png" alt="pro_mid2009_3dpes" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/pro_mid2009_averages_hamlet.png" alt="pro_mid2009_hamlet" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/pro_mid2009_averages_mirflickr.png" alt="pro_mid2009_mirflickr" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/pro_mid2009_averages_tobacco800.png" alt="pro_mid2009_tobacco800" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Density-Size tests on a i7-4790 CPU @ 3.60 GHz with Windows and Microsoft Visual Studio 2013 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/ilb14_density.png" alt="ilb14_density" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/ilb14_size.png" alt="ilb14_size" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Density-Size tests on a Xeon CPU E5-2609 v2 @ 2.50GHz with Linux and GCC 5.2 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/softechict-nvidia_density.png" alt="softechict-nvidia_density" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/softechict-nvidia_size.png" alt="softechict-nvidia_size" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Density-Size tests on a Intel Core Duo @ 2.8GHz with OS~X XCode 7.2.1 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/pro_mid2009_density.png" alt="pro_mid2009_density" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/pro_mid2009_size.png" alt="pro_mid2009_size" height="260" width="415"></td>
-</tr>
-</table>
-
-### ... on 08/10/2016
-
-<p align="justify">We performed tests on all datasets and algorithms on four different environments, in order to show newest features of YACCLAB: an Intel Core i7-4980HQ CPU @ 2.80GHz running OS~X with XCode 7.2.1, a Windows PC with i7-4770 CPU @ 3.40GHz and Microsoft Visual Studio 2013, a Linux workstation with a i5-6600 CPU @ 3.30GHz and gcc 5.3.1-14, and, finally, a Windows PC with i5-6600 CPU @ 3.30GHz and Microsoft Visual Studio 2013. All performance tests were repeated 10 times, and for each image the minimum execution time was considered. </p>
-
-<table border="0">
-<caption><h4>Average run-time tests on an Intel Core i7-4980HQ CPU @ 2.80GHz running OS~X with XCode 7.2.1 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Fingerprints</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/3dpesMAC.png" alt="3dpesMAC" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/fingerprintsMAC.png" alt="fingerprintsMAC" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>Hamlet</b></td>
- <td align="center"><b>Medical</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/hamletMAC.png" alt="hamletMAC" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/medicalMAC.png" alt="medicalMAC" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/mirflickrMAC.png" alt="mirflickrMAC" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/tobacco800MAC.png" alt="tobacco800MAC" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Average run-time tests on a i7-4770 CPU @ 3.40GHz with Windows and Microsoft Visual Studio 2013 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Fingerprints</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/3dpesWIN.png" alt="3dpesWIN" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/fingerprintsWIN.png" alt="fingerprintsWIN" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>Hamlet</b></td>
- <td align="center"><b>Medical</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/hamletWIN.png" alt="hamletWIN" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/medicalWIN.png" alt="medicalWIN" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/mirflickrWIN.png" alt="mirflickrWIN" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/tobacco800WIN.png" alt="tobacco800WIN" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Average run-time tests on a i5-6600 CPU @ 3.30GHz with Linux and GCC 5.3.1-14 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Fingerprints</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/3dpesLINUX.png" alt="3dpesLINUX" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/fingerprintsLINUX.png" alt="fingerprintsLINUX" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>Hamlet</b></td>
- <td align="center"><b>Medical</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/hamletLINUX.png" alt="hamletLINUX" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/medicalLINUX.png" alt="medicalLINUX" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/mirflickrLINUX.png" alt="mirflickrLINUX" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/tobacco800LINUX.png" alt="tobacco800LINUX" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Average run-time tests on a i5-6600 CPU @ 3.30GHz with Windows and Microsoft Visual Studio 2013 (lower is better)</h4></caption>
-<tr>
- <td align="center"><b>3DPeS</b></td>
- <td align="center"><b>Fingerprints</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/3dpesWIN2.png" alt="3dpesWIN2" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/fingerprintsWIN2.png" alt="fingerprintsWIN2" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>Hamlet</b></td>
- <td align="center"><b>Medical</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/hamletWIN2.png" alt="hamletWIN2" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/medicalWIN2.png" alt="medicalWIN2" height="260" width="415"></td>
-</tr>
-</table>
-<table border="0">
-<tr>
- <td align="center"><b>MIRflickr</b></td>
- <td align="center"><b>Tobacco800</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/mirflickrWIN2.png" alt="mirflickrWIN2" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/tobacco800WIN2.png" alt="tobacco800WIN2" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Density-Size tests on an Intel Core i7-4980HQ CPU @ 2.80GHz running OS~X with XCode 7.2.1 (some algorithms have been omitted to make the charts more legible, lower is better). </h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/densityMAC.png" alt="densityMAC" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/sizeMAC.png" alt="sizeMAC" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Density-Size tests on a i7-4770 CPU @ 3.40GHz with Windows and Microsoft Visual Studio 2013 (some algorithms have been omitted to make the charts more legible, lower is better).</h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/densityWIN.png" alt="densityWIN" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/sizeWIN.png" alt="sizeWIN" height="260" width="415"></td>
-</tr>
-</table>
-
-<table border="0">
-<caption><h4>Density-Size tests on a i5-6600 CPU @ 3.30GHz with Linux and and GCC 5.3.1-14 (some algorithms have been omitted to make the charts more legible, lower is better).</h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/densityLINUX.png" alt="densityLINUX" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/sizeLINUX.png" alt="sizeLINUX" height="260" width="415"></td>
-</tr>
-</table>
-
-
-<table border="0">
-<caption><h4>Density-Size tests on a i5-6600 CPU @ 3.30GHz with Windows and Microsoft Visual Studio 2013 (some algorithms have been omitted to make the charts more legible, lower is better).</h4></caption>
-<tr>
- <td align="center"><b>Density</b></td>
- <td align="center"><b>Size</b></td>
-</tr>
-<tr>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/densityWIN2.png" alt="densityWIN2" height="260" width="415"></td>
- <td><img src="http://imagelab.ing.unimore.it/files2/yacclab/sizeWIN2.png" alt="sizeWIN2" height="260" width="415"></td>
-</tr>
-</table>
-
-<table>
-<caption><h4>Analysis of memory accesses required by connected components computation for 'Random' dataset. The numbers are given in millions of accesses</h4></caption>
-	<tr>
-   <td align="center">Algorithm           </td>
-   <td align="center">Total Accesses      </td>
-   <td align="center">Binary Image        </td>
-   <td align="center">Label Image         </td>
-   <td align="center">Equivalence Vector/s</td>
-   <td align="center">Other               </td>
-	</tr>
- <tr>
-   <td align="center">SAUF  </td>
-   <td align="center">20.963</td>
-   <td align="center">5.475 </td>
-   <td align="center">11.288</td>
-   <td align="center">4.200 </td>
-   <td align="center">-     </td>
-	</tr>
-	<tr>
-   <td align="center">DiStefano</td>
-   <td align="center">187.512  </td>
-   <td align="center">2.796    </td>
-   <td align="center">12.580   </td>
-   <td align="center">171.972  </td>
-   <td align="center">0.164    </td>
-	</tr>
-	<tr>
-   <td align="center">BBDT  </td>
-   <td align="center">12.237</td>
-   <td align="center">6.012 </td>
-   <td align="center">4.757	</td>
-   <td align="center">1.468	</td>
-   <td align="center">-     </td>
-	</tr>
-	<tr>
-   <td align="center">LSL_STD</td>
-   <td align="center">27.792  </td>
-   <td align="center">2.796	  </td>
-   <td align="center">2.796	  </td>
-   <td align="center">1.616	  </td>
-   <td align="center">20.584  </td>
-	</tr>
- 	<tr>
-   <td align="center">PRED  </td>
-   <td align="center">20.194</td>
-   <td align="center">4.706	</td>
-   <td align="center">11.288</td>
-   <td align="center">4.200	</td>
-   <td align="center">-     </td>
-	</tr>
- 	<tr>
-   <td align="center">NULL </td>
-   <td align="center">5.592</td>
-   <td align="center">2.796</td>
-   <td align="center">2.796</td>
-   <td align="center">-    </td>
-   <td align="center">-    </td>
-	</tr>
-</table>
-
-<table>
-<caption><h4>Analysis of memory accesses required by connected components computation for 'Tobacco800' dataset. The numbers are given in millions of accesses</h4></caption>
-	<tr>
-   <td align="center">Algorithm           </td>
-   <td align="center">Total Accesses      </td>
-   <td align="center">Binary Image        </td>
-   <td align="center">Label Image         </td>
-   <td align="center">Equivalence Vector/s</td>
-   <td align="center">Other               </td>
-	</tr>
-  <tr>
-   <td align="center">SAUF  </td>
-   <td align="center">23.874</td>
-   <td align="center">4.935 </td>
-   <td align="center">14.286</td>
-   <td align="center">4.653 </td>
-   <td align="center">-     </td>
-	</tr>
-  <tr>
-   <td align="center">DiStefano</td>
-   <td align="center">17.041   </td>
-   <td align="center">4.604    </td>
-   <td align="center">10.393   </td>
-   <td align="center">2.037    </td>
-   <td align="center">0.007    </td>
-	</tr>
-  <tr>
-   <td align="center">BBDT  </td>
-   <td align="center">12.046</td>
-   <td align="center">4.942 </td>
-   <td align="center">6.982 </td>
-   <td align="center">0.122 </td>
-   <td align="center">-     </td>
-	</tr>
-   <tr>
-   <td align="center">LSL_STD</td>
-   <td align="center">38.267 </td>
-   <td align="center">4.604  </td>
-   <td align="center">4.604  </td>
-   <td align="center">1.189  </td>
-   <td align="center">27.870 </td>
-	</tr>
-  <tr>
-   <td align="center">PRED  </td>
-   <td align="center">23.799</td>
-   <td align="center">4.860 </td>
-   <td align="center">14.286</td>
-   <td align="center">4.653 </td>
-   <td align="center">-     </td>
-	</tr>
-  <tr>
-   <td align="center">NULL </td>
-   <td align="center">9.208</td>
-   <td align="center">4.604</td>
-   <td align="center">4.604</td>
-   <td align="center">-    </td>
-   <td align="center">-    </td>
-	</tr>
-</table>
--->
-
 ## References
 
 <p align="justify"><em><a name="CT">[1]</a> F. Chang, C.-J. Chen, and C.-J. Lu, “A linear-time component-labeling algorithm using contour tracing technique,” Computer Vision and Image Understanding, vol. 93, no. 2, pp. 206–220, 2004.</em></p>
@@ -773,3 +313,4 @@ recognition. Springer Science & Business Media, 2009.</em></p>
 <p align="justify"><em><a name="YACCLAB">[17]</a> C.Grana, F.Bolelli, L.Baraldi, and R.Vezzani, YACCLAB - Yet Another Connected Components Labeling Benchmark, Proceedings of the 23rd International Conference on Pattern Recognition, Cancun, Mexico, 4-8 Dec 2016.</em></p>
 <p align="justify"><em><a name="YACCLAB_JRTIP">[18]</a> Bolelli, Federico; Cancilla, Michele; Baraldi, Lorenzo; Grana, Costantino "Towards Reliable Experiments on the Performance of Connected Components Labeling Algorithms" Journal of Real-Time Image Processing, 2018.</em></p>
 <p align="justify"><em><a name="DRAG">[19]</a> Bolelli, Federico; Baraldi, Lorenzo; Cancilla, Michele; Grana, Costantino "Connected Components Labeling on DRAGs" Proceedings of the 23rd International Conference on Pattern Recognition, Beijing, China, 20-24 Aug 2018.</em></p>
+-->
