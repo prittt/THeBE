@@ -46,6 +46,8 @@ algorithms:
   - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
   - GuoHall         , GH        ; GuoHall
   - GuoHallLUT      , GH_LUT    ; GuoHall
+  - GuoHallTree     , GH_TREE   ; GuoHall
+  - GuoHallDrag     , GH_DRAG   ; GuoHall
   - ChenHsu         , CH        ; ChenHsu
   - ChenHsuLUT      , CH_LUT    ; ChenHsu
   - ChenHsuTree     , CH_TREE   ; ChenHsu
