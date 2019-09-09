@@ -32,7 +32,7 @@ set (ProjectName "THeBE")
 project (${ProjectName})
 
 #Suppress creation of ZERO_CHECK
-set(CMAKE_SUPPRESS_REGENERATION true)
+#set(CMAKE_SUPPRESS_REGENERATION true)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configs" FORCE)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "Install prefix" FORCE)
