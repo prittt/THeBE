@@ -97,8 +97,8 @@ private:
 
         for (unsigned i = 0; i < cfg_.check_datasets.size(); ++i) { // For every dataset in the check_datasets list
             cv::String dataset_name(cfg_.check_datasets[i]);
-            path dataset_path(cfg_.input_path / path(dataset_name));
-            path is_path = dataset_path / path(cfg_.input_txt); // files.txt path
+            filesystem::path dataset_path(cfg_.input_path / filesystem::path(dataset_name));
+            filesystem::path is_path = dataset_path / filesystem::path(cfg_.input_txt); // files.txt path
 
             // Load list of images on which ccl_algorithms must be tested
             std::vector<std::pair<std::string, bool>> filenames; // first: filename, second: state of filename (find or not)
@@ -115,7 +115,7 @@ private:
                 ob.UpdateUnitaryBox(file);
 
                 std::string filename = filenames[file].first;
-                path filename_path = dataset_path / path(filename);
+                filesystem::path filename_path = dataset_path / filesystem::path(filename);
 
                 // Load image
                 if (!GetBinaryImage(filename_path, Thinning::img_)) {
@@ -148,7 +148,7 @@ private:
 
                         if (!diff) {
                             stats[j] = false;
-                            first_fail[j] = (path(dataset_name) / path(filename)).string();
+                            first_fail[j] = (filesystem::path(dataset_name) / filesystem::path(filename)).string();
 
                             // Stop check test if all the algorithms fail
                             if (adjacent_find(stats.begin(), stats.end(), std::not_equal_to<int>()) == stats.end()) {
