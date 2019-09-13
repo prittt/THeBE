@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright(c) 2016 - 2017 Federico Bolelli
+# Copyright(c) 2016 - 2019 Federico Bolelli
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -13,7 +13,7 @@
 # this list of conditions and the following disclaimer in the documentation
 # and / or other materials provided with the distribution.
 # 
-# * Neither the name of YACCLAB nor the names of its
+# * Neither the name of THeBE nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 # 
@@ -35,10 +35,10 @@ function build_linux(){
 
    echo -e "############################################### Build and Test ###############################################"
 
-   echo -e "\n\n------------------------------------------> YACCLAB configuration" 
+   echo -e "\n\n------------------------------------------> THeBE configuration" 
    mkdir bin
-   # The download of the complete YACCLAB dataset is disable in order to reduce the cmake configure time in travis-ci virtual machine
-   cmake -D CMAKE_C_FLAGS=-m64 -D CMAKE_CXX_FLAGS=-m64 -D CMAKE_BUILD_TYPE=Release -D CMAKE_PREFIX_PATH=./opencv-3.1.0/build/ -D YACCLAB_DOWNLOAD_DATASET=OFF -D YACCLAB_IS_TRAVIS_CI=ON -G Unix\ Makefiles -Bbin -Hbin/.. 
+   # The download of the complete THeBE dataset is disable in order to reduce the cmake configure time in travis-ci virtual machine
+   cmake -D CMAKE_C_FLAGS=-m64 -D CMAKE_CXX_FLAGS=-m64 -D CMAKE_BUILD_TYPE=Release -D CMAKE_PREFIX_PATH=./opencv-3.1.0/build/ -D THEBE_DOWNLOAD_DATASET=OFF -D THEBE_IS_TRAVIS_CI=ON -G Unix\ Makefiles -Bbin -Hbin/.. 
 
    cd bin
    
@@ -49,21 +49,21 @@ function build_linux(){
    cat config.yaml
    echo -e "------------------------------------------> DONE!"
    
-   # Download of a reduced version of the YACCLAB dataset
-   echo -e "\n\n------------------------------------------> Download of YACCLAB reduced dataset" 
+   # Download of a reduced version of the THeBE dataset, which is part of the reduced YACCLAB dataset
+   echo -e "\n\n------------------------------------------> Download of THeBE reduced dataset" 
    #curl -L --progress-bar http://imagelab.ing.unimore.it/files/YACCLAB_dataset.zip > dataset.zip
    wget http://imagelab.ing.unimore.it/files/YACCLAB_dataset_reduced.zip -O dataset.zip
    unzip -qq dataset.zip
    rm dataset.zip  
    echo -e "------------------------------------------> DONE!"
    
-   echo -e "\n\n------------------------------------------> Build and Test YACCLAB" 
+   echo -e "\n\n------------------------------------------> Build and Test THeBE" 
    #rm config.yaml
    #cp ../doc/config_travis.yaml .
    #mv config_travis.yaml config.yaml
  
    make 
-   ./YACCLAB
+   ./THeBE
    echo -e "------------------------------------------> DONE!"
 }
 
@@ -71,9 +71,9 @@ function build_mac(){
 
    echo -e "############################################### Build and Test ###############################################"
  
-   echo -e "\n\n------------------------------------------> YACCLAB configuration" 
+   echo -e "\n\n------------------------------------------> THeBE configuration" 
    mkdir bin
-   cmake -D CMAKE_C_FLAGS=-m64 -D CMAKE_CXX_FLAGS=-m64 -D CMAKE_BUILD_TYPE=Release -D CMAKE_PREFIX_PATH=./opencv-3.1.0/build/ -D YACCLAB_DOWNLOAD_DATASET=OFF -D YACCLAB_IS_TRAVIS_CI=ON -G Xcode -Bbin -Hbin/.. 
+   cmake -D CMAKE_C_FLAGS=-m64 -D CMAKE_CXX_FLAGS=-m64 -D CMAKE_BUILD_TYPE=Release -D CMAKE_PREFIX_PATH=./opencv-3.1.0/build/ -D THEBE_DOWNLOAD_DATASET=OFF -D THEBE_IS_TRAVIS_CI=ON -G Xcode -Bbin -Hbin/.. 
 
    cd bin
    
@@ -84,22 +84,22 @@ function build_mac(){
    cat config.yaml
    echo -e "------------------------------------------> DONE!"
 
-   # Download of a reduced version of the YACCLAB dataset
-   echo -e "\n\n------------------------------------------> Download of YACCLAB reduced dataset" 
+   # Download of a reduced version of the THeBE dataset, which is part of the reduced YACCLAB dataset
+   echo -e "\n\n------------------------------------------> Download of THeBE reduced dataset" 
    #curl -L --progress-bar http://imagelab.ing.unimore.it/files/YACCLAB_dataset.zip > dataset.zip
    wget http://imagelab.ing.unimore.it/files/YACCLAB_dataset_reduced.zip -O dataset.zip
    unzip -qq dataset.zip
    rm dataset.zip  
    echo -e "------------------------------------------> DONE!"
    
-   echo -e "\n\n------------------------------------------> Build and Test YACCLAB" 
+   echo -e "\n\n------------------------------------------> Build and Test THeBE" 
    #rm config.yaml
    #cp ../doc/config_travis.yaml .
    #mv config_travis.yaml config.yaml
  
    # xcodebuild -project YACCLAB.xcodeproj -target YACCLAB -configuration Release > 
-   xcodebuild -project YACCLAB.xcodeproj -target YACCLAB -configuration Release
-   ./Release/YACCLAB
+   xcodebuild -project THeBE.xcodeproj -target THeBE -configuration Release
+   ./Release/THeBE
    echo -e "------------------------------------------> DONE!"
 }
 
