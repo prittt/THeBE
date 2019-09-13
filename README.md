@@ -1,4 +1,4 @@
-# THeBE: The THinning evaluation BEnchmark
+# THeBE: The THinning evaluation BEnchmark &nbsp;&nbsp;&nbsp; [![Build Status](https://travis-ci.org/prittt/THeBE.svg?branch=master)](https://travis-ci.org/prittt/THeBE)
 
 <p align="justify">Please include the following reference when citing the THeBE project/dataset:</p>
 
