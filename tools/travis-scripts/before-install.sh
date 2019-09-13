@@ -28,37 +28,6 @@
 # OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# List of OpenCV 3.1.0 modules
-#-D BUIL_opencv_core=ON
-#-D BUIL_opencv_imgproc=ON
-#-D BUIL_opencv_imgcodecs=ON
-#-D BUIL_opencv_videoio=OFF 
-#-D BUIL_opencv_highgui=OFF 
-#-D BUIL_opencv_video=OFF
-#-D BUIL_opencv_calib3d=OFF
-#-D BUIL_opencv_features2d=OFF
-#-D BUIL_opencv_objdetect=OFF
-#-D BUIL_opencv_ml=OFF
-#-D BUIL_opencv_flann=OFF
-#-D BUIL_opencv_photo=OFF
-#-D BUIL_opencv_stitching=OFF
-#-D BUIL_opencv_cudaarithm=OFF
-#-D BUIL_opencv_cudabgsegm=OFF
-#-D BUIL_opencv_cudacodec=OFF
-#-D BUIL_opencv_cudafeatures2d=OFF
-#-D BUIL_opencv_cudafilters=OFF
-#-D BUIL_opencv_cudaimgproc=OFF
-#-D BUIL_opencv_cudalegacy=OFF
-#-D BUIL_opencv_cudaobjdetect=OFF
-#-D BUIL_opencv_cudaoptflow=OFF
-#-D BUIL_opencv_cudastereo=OFF
-#-D BUIL_opencv_cudawarping=OFF
-#-D BUIL_opencv_cudev=OFF
-#-D BUIL_opencv_shape=OFF
-#-D BUIL_opencv_superres=OFF
-#-D BUIL_opencv_videostab=OFF
-#-D BUIL_opencv_viz=OFF
-
 # Exit this script if any commmand fails 
 set -e
 
@@ -71,7 +40,7 @@ function install_linux_environment()
   echo -e "------------------------------------------> DONE!" 
   
   echo -e "\n\n------------------------------------------> Update apt"
-  #sudo apt-get -qq update -y
+  sudo apt-get -qq update
   echo -e "------------------------------------------> DONE!" 
   
   echo -e "\n\n------------------------------------------> Install gcc-4.8:"
@@ -84,7 +53,22 @@ function install_linux_environment()
   #sudo apt-get install build-essential gcc-multilib gcc-4.8-multilib g++-multilib g++-4.8-multilib lib32z1 lib32ncurses5 lib32bz2-1.0 libc6-dev libgmp-dev libmpfr-dev libmpc-dev
   #sudo dpkg --add-architecture i386
   #sudo ln -s /usr/include/x86_64-linux-gnu/zconf.h /usr/include
-  #echo -e "------------------------------------------> DONE!"  
+  #echo -e "------------------------------------------> DONE!"
+  
+  echo -e "\n\n------------------------------------------> Install cmake-3.13:"
+  export DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  curl -L https://cmake.org/files/v3.13/cmake-3.13.0-Linux-x86_64.tar.gz > cmake-3.13.tar.gz
+  echo -e "    DONE"
+  tar -xzf cmake-3.13.tar.gz
+  mv cmake-3.13.0-Linux-x86_64 cmake-install
+  export PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
+  cd ${TRAVIS_BUILD_DIR}
+  echo -e "------------------------------------------> DONE!" 
+
+  echo -e "\n\n------------------------------------------> Check CMake version"
+  cmake --version
+  echo -e "------------------------------------------> DONE!"   
   
   echo -e "\n\n------------------------------------------> Install OpenCV-3.1.0 (only if they weren't cached) and dependent packages:"
   sudo apt-get -qq -y install build-essential
@@ -100,7 +84,8 @@ function install_linux_environment()
     echo -e "    OpenCV not installed yet, downloading it ... "
     # Download v3.1.0 .zip file and extract.
     #curl -L --progress-bar https://github.com/Itseez/opencv/archive/3.1.0.zip > opencv.zip
-	curl -L https://github.com/Itseez/opencv/archive/3.1.0.zip > opencv.zip
+	#curl -L https://github.com/Itseez/opencv/archive/3.1.0.zip > opencv.zip
+	curl -L https://github.com/opencv/opencv/archive/3.1.0.zip > opencv.zip
     echo -e "    DONE"
     unzip -qq opencv.zip
     rm opencv.zip
@@ -162,12 +147,23 @@ function install_osx_environment()
   brew cleanup > /dev/null
   #brew cleanup > brew_cleanup.log
   rm -rf "'brew cache'"
-  
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
   #Update brew and packages
   #brew update -y > /dev/null
   #brew upgrade -y > /dev/null
   #brew update -y > brew_update.log
   #brew upgrade -y > brew_upgrade.log
+  echo -e "------------------------------------------> DONE!" 
+  
+  echo -e "\n\n------------------------------------------> Install cmake-3.13:"
+  export DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  curl -L https://cmake.org/files/v3.13/cmake-3.13.0-Darwin-x86_64.tar.gz > cmake-3.13.tar.gz
+  echo -e "    DONE"
+  tar -xzf cmake-3.13.tar.gz
+  mv cmake-3.13.0-Darwin-x86_64 cmake-install
+  export PATH=${DEPS_DIR}/cmake-install/CMake.app/Contents/bin:$PATH
+  cd ${TRAVIS_BUILD_DIR}
   echo -e "------------------------------------------> DONE!" 
   
   echo -e "\n\n------------------------------------------> Check CMake version"
@@ -214,8 +210,7 @@ function install_osx_environment()
   export LD_LIBRARY_PATH=./opencv-3.1.0/build/install_dir
   echo -e "------------------------------------------> DONE!"
 	
-  echo -e "\n\n------------------------------------------> Install Gnuplot and dependent packages:" 
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+  echo -e "\n\n------------------------------------------> Install Gnuplot" 
   brew install gnuplot > gnuplot_install.log
   gnuplot --version
   echo -e "------------------------------------------> DONE!" 
