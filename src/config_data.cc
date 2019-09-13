@@ -65,7 +65,7 @@ ConfigData::ConfigData(const FileStorage& fs) {
 #endif
     output_image_folder = "output_images";
     middle_folder = "middle_results";
-    latex_file = "yacclab_results.tex";
+    latex_file = "thebe_results.tex";
     latex_charts = "averageCharts.tex";
     latex_memory_file = "memoryAccesses.tex";
     memory_file = "memory_accesses.txt";
