@@ -41,7 +41,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "Install prefix" FORCE
 set(THEBE_DOWNLOAD_DATASET OFF CACHE BOOL "If flagged the THeBE dataset will be automatically downloaded")
 set(THEBE_INPUT_DATASET_PATH "${CMAKE_INSTALL_PREFIX}/input" CACHE PATH "'input' dataset path") 
 set(THEBE_OUTPUT_RESULTS_PATH "${CMAKE_INSTALL_PREFIX}/output" CACHE PATH "'output' results path") 
-#set(THEBE_IS_TRAVIS_CI OFF CACHE BOOL "This variable is used to handle travis-ci parameters, do not change its value")
+set(THEBE_IS_TRAVIS_CI OFF CACHE BOOL "This variable is used to handle travis-ci parameters, do not change its value")
 
 if(MSVC)
     set(CMAKE_USE_RELATIVE_PATHS ON CACHE INTERNAL "" FORCE)
