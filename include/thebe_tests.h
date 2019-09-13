@@ -125,8 +125,8 @@ private:
                 
                 unsigned j = 0;
                 for (unsigned alg = 0; alg < thin_algorithms.size(); ++alg) {
-                    string algo_name = thin_algorithms[alg].test_name;
-                    string check_algo_name = thin_algorithms[alg].check_name;
+                    std::string algo_name = thin_algorithms[alg].test_name;
+					std::string check_algo_name = thin_algorithms[alg].check_name;
 
                     // SAUF with Union-Find is the reference: labels are already "normalized"
                     Thinning *ref = ThinningMapSingleton::GetThinning(check_algo_name);
