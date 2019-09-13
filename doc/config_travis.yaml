@@ -1,0 +1,86 @@
+%YAML:1.2
+---
+##########################################
+# This is the THeBE configuration file #
+##########################################
+
+# -------------------------------------------------------------------------------------
+# Tests to perform and their number of repetitions
+# -------------------------------------------------------------------------------------
+
+# Kind of tests to execute
+perform: 
+  average:            true
+  average_with_steps: false
+  correctness:        false  
+  
+correctness_tests: 
+  standard: true
+  steps:    false
+  memory:   false
+  
+# Number of tests repetitions 
+tests_number: 
+  average:            1
+  average_with_steps: 1
+
+# -------------------------------------------------------------------------------------
+# List of thinning algorithms to test
+# -------------------------------------------------------------------------------------
+
+# <implementation_name> [,<name_to_be_displayed>] [; <reference_impl_name>]
+# where:
+#   * "implementation_name" : is the name of the algorithm class implementation
+#
+#   * "name_to_be_displayed": is the name that will be used inside output charts and 
+#      tables. If it is not specified "implementation_name" will be used 
+#
+#   * "reference_impl_name" : is the name of the reference algorithm class implementation
+#      that will be used to chech the correctness of the algorithm specified by the 
+#      "implementation_name"
+algorithms: 
+  - ZhangSuenNoPtrs , ZS_OpenCV ; ZhangSuenNoPtrs
+  - ZhangSuen       , ZS        ; ZhangSuenNoPtrs
+  - ZhangSuenLUT    , ZS_LUT    ; ZhangSuenNoPtrs
+  - ZhangSuenTree   , ZS_TREE   ; ZhangSuenNoPtrs
+  - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
+  - GuoHall         , GH        ; GuoHall
+  - GuoHallLUT      , GH_LUT    ; GuoHall
+  - GuoHallTree     , GH_TREE   ; GuoHall
+  - GuoHallDrag     , GH_DRAG   ; GuoHall
+  - ChenHsu         , CH        ; ChenHsu
+  - ChenHsuLUT      , CH_LUT    ; ChenHsu
+  - ChenHsuTree     , CH_TREE   ; ChenHsu
+  - ChenHsuDrag     , CH_DRAG   ; ChenHsu
+
+# -------------------------------------------------------------------------------------
+# Datasets to use for each test
+# -------------------------------------------------------------------------------------
+
+# List of datasets on which "Correctness Tests" shall be run
+check_datasets: ["fingerprints"]
+
+# List of datasets on which "Average Runtime Tests" shall be run
+average_datasets: ["fingerprints", "hamlet"]
+
+# List of datasets on which "Average Runtime Tests With Steps" shall be run
+average_datasets_with_steps: ["fingerprints", "hamlet"]
+
+# -------------------------------------------------------------------------------------
+# Additional utilities
+# -------------------------------------------------------------------------------------
+
+# Save output images
+output_images: false
+
+# Directory for input/output paths
+paths: {input: "${THEBE_INPUT_DATASET_PATH}", output: "${THEBE_OUTPUT_RESULTS_PATH}"}
+
+# Save the results of each run test
+save_middle_tests: {average: false, average_with_steps: false}
+
+os: "${THEBE_OS}"
+
+##########################################
+# This is the THeBE configuration file #
+##########################################
