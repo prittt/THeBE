@@ -1,8 +1,10 @@
 # THeBE: The THinning evaluation BEnchmark &nbsp;&nbsp;&nbsp; [![Build Status](https://travis-ci.org/prittt/THeBE.svg?branch=master)](https://travis-ci.org/prittt/THeBE)
 
+<!--
 <p align="justify">Please include the following reference when citing the THeBE project/dataset:</p>
 
-- <p align="justify"> Bolelli, Federico; Grana, Costantino "Improving the Performance of Thinning Algorithms with Directed Rooted Acyclic Graphs" 20th International Conference on Image Analysis and Processing, 2019. <a title="BibTex" href="http://imagelab.ing.unimore.it/files2/thebe/THEBE_ICIAP2019_BibTex.html">BibTex</a>. <!--<a title="Download" href="https://iris.unimore.it/retrieve/handle/11380/1155728/186233/2018_JRTIP_Towards_Reliable_Experiments_on_the_Performance_of_Connected_Components_Labeling_Algorithms.pdf"><img src="https://raw.githubusercontent.com/prittt/YACCLAB/master/doc/pdf_logo.png" alt="Download." /></a>--></p>
+- <p align="justify"> Bolelli, Federico; Grana, Costantino "Improving the Performance of Thinning Algorithms with Directed Rooted Acyclic Graphs" 20th International Conference on Image Analysis and Processing, 2019. <a title="BibTex" href="http://imagelab.ing.unimore.it/files2/thebe/THEBE_ICIAP2019_BibTex.html">BibTex</a>.</p>
+-->
 
 <p align="justify">
 THeBE is an open source <i>C++</i> project that enables researchers to test thinning algorithms under extremely variable points of view, running and testing algorithms on a collection of datasets <!--described below-->. The benchmark provides <i>correctness</i> and average run-time (<i>average</i>) tests.
