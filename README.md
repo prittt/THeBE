@@ -7,7 +7,7 @@
 -->
 
 <p align="justify">
-THeBE is an open source <i>C++</i> project that enables researchers to test thinning algorithms under extremely variable points of view, running and testing algorithms on a collection of datasets <!--described below-->. The benchmark provides <i>correctness</i> and average run-time (<i>average</i>) tests.
+THeBE is an open source <i>C++</i> project that allows to compare thinning algorithms, highlighting strengths and weaknesses of different strategies available in literature.
 </p>
 
 ## Requirements
