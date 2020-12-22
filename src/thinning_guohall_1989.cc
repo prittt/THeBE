@@ -9,7 +9,12 @@
 REGISTER_THINNING(GuoHall);
 REGISTER_THINNING(GuoHallLUT);
 REGISTER_THINNING(GuoHallTree);
-REGISTER_THINNING(GuoHallDrag);
+REGISTER_THINNING(GuoHallSpaghetti);
+REGISTER_THINNING(GuoHallSpaghetti_FREQ_Hamlet);
+REGISTER_THINNING(GuoHallSpaghetti_FREQ_All);
+REGISTER_THINNING(GuoHallSpaghetti_FREQ_AllNoClassical);
+REGISTER_THINNING(GuoHallSpaghettiFreq);
+
 
 #define BLOCK_TO_P						\
     const uchar p2 = (block >> 1) & 1;  \
@@ -149,7 +154,7 @@ inline bool GuoHallTree::thinning_iteration(cv::Mat1b& img, int iter)
     return modified;
 }
 
-inline bool GuoHallDrag::thinning_iteration(cv::Mat1b& img, int iter)
+inline bool GuoHallSpaghetti::thinning_iteration(cv::Mat1b& img, int iter)
 {
     cv::Mat1b out(img.size(), 0);
 
@@ -178,9 +183,9 @@ inline bool GuoHallDrag::thinning_iteration(cv::Mat1b& img, int iter)
 #define ACTION_3 modified = true;   // change0
 
         int c = -1;
-        goto tree_0;
+        goto cl_tree_0;
 
-#include "thinning_guohall_1989_drag.inc"
+#include "GH_Spaghetti_center_line_forest_code.inc.h"
 
     }
 
@@ -204,3 +209,167 @@ inline bool GuoHallDrag::thinning_iteration(cv::Mat1b& img, int iter)
     return modified;
 }
 
+inline bool GuoHallSpaghetti_FREQ_Hamlet::thinning_iteration(cv::Mat1b& img, int iter)
+{
+    cv::Mat1b out(img.size(), 0);
+
+    auto w = img.cols;
+
+    bool modified = false;
+    for (int r = 1; r < img.rows - 1; r++) {
+        const unsigned char* const img_row = img.ptr<unsigned char>(r);
+        const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
+        const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
+        unsigned char* const out_row = out.ptr<unsigned char>(r);
+
+#define CONDITION_P1 img_row[c]
+#define CONDITION_P2 img_row_prev[c]
+#define CONDITION_P3 img_row_prev[c+1]
+#define CONDITION_P4 img_row[c+1]
+#define CONDITION_P5 img_row_foll[c+1]
+#define CONDITION_P6 img_row_foll[c]
+#define CONDITION_P7 img_row_foll[c-1]
+#define CONDITION_P8 img_row[c-1]
+#define CONDITION_P9 img_row_prev[c-1]
+#define CONDITION_ITER iter
+
+#define ACTION_1 ;                  // keep0
+#define ACTION_2 out_row[c] = 1;    // keep1
+#define ACTION_3 modified = true;   // change0
+
+        int c = -1;
+        goto cl_tree_0;
+
+#include "GH_Spaghetti_FREQ_hamlet_center_line_forest_code.inc.h"
+
+    }
+
+    img = out;
+
+#undef CONDITION_P1
+#undef CONDITION_P2
+#undef CONDITION_P3
+#undef CONDITION_P4
+#undef CONDITION_P5
+#undef CONDITION_P6
+#undef CONDITION_P7
+#undef CONDITION_P8
+#undef CONDITION_P9
+#undef CONDITION_ITER
+
+#undef ACTION_1
+#undef ACTION_2
+#undef ACTION_3
+
+    return modified;
+}
+
+inline bool GuoHallSpaghetti_FREQ_All::thinning_iteration(cv::Mat1b& img, int iter)
+{
+	cv::Mat1b out(img.size(), 0);
+
+	auto w = img.cols;
+
+	bool modified = false;
+	for (int r = 1; r < img.rows - 1; r++) {
+		const unsigned char* const img_row = img.ptr<unsigned char>(r);
+		const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
+		const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
+		unsigned char* const out_row = out.ptr<unsigned char>(r);
+
+#define CONDITION_P1 img_row[c]
+#define CONDITION_P2 img_row_prev[c]
+#define CONDITION_P3 img_row_prev[c+1]
+#define CONDITION_P4 img_row[c+1]
+#define CONDITION_P5 img_row_foll[c+1]
+#define CONDITION_P6 img_row_foll[c]
+#define CONDITION_P7 img_row_foll[c-1]
+#define CONDITION_P8 img_row[c-1]
+#define CONDITION_P9 img_row_prev[c-1]
+#define CONDITION_ITER iter
+
+#define ACTION_1 ;                  // keep0
+#define ACTION_2 out_row[c] = 1;    // keep1
+#define ACTION_3 modified = true;   // change0
+
+		int c = -1;
+		goto cl_tree_0;
+		
+#include "GH_Spaghetti_FREQ_fingerprints-hamlet-3dpes-xdocs-tobacco800-mirflickr-medical-classical_center_line_forest_code.inc.h"
+
+	}
+
+	img = out;
+
+#undef CONDITION_P1
+#undef CONDITION_P2
+#undef CONDITION_P3
+#undef CONDITION_P4
+#undef CONDITION_P5
+#undef CONDITION_P6
+#undef CONDITION_P7
+#undef CONDITION_P8
+#undef CONDITION_P9
+#undef CONDITION_ITER
+
+#undef ACTION_1
+#undef ACTION_2
+#undef ACTION_3
+
+	return modified;
+}
+
+inline bool GuoHallSpaghetti_FREQ_AllNoClassical::thinning_iteration(cv::Mat1b& img, int iter)
+{
+	cv::Mat1b out(img.size(), 0);
+
+	auto w = img.cols;
+
+	bool modified = false;
+	for (int r = 1; r < img.rows - 1; r++) {
+		const unsigned char* const img_row = img.ptr<unsigned char>(r);
+		const unsigned char* const img_row_prev = (unsigned char *)(((char *)img_row) - img.step.p[0]);
+		const unsigned char* const img_row_foll = (unsigned char *)(((char *)img_row) + img.step.p[0]);
+		unsigned char* const out_row = out.ptr<unsigned char>(r);
+
+#define CONDITION_P1 img_row[c]
+#define CONDITION_P2 img_row_prev[c]
+#define CONDITION_P3 img_row_prev[c+1]
+#define CONDITION_P4 img_row[c+1]
+#define CONDITION_P5 img_row_foll[c+1]
+#define CONDITION_P6 img_row_foll[c]
+#define CONDITION_P7 img_row_foll[c-1]
+#define CONDITION_P8 img_row[c-1]
+#define CONDITION_P9 img_row_prev[c-1]
+#define CONDITION_ITER iter
+
+#define ACTION_1 ;                  // keep0
+#define ACTION_2 out_row[c] = 1;    // keep1
+#define ACTION_3 modified = true;   // change0
+
+		int c = -1;
+		goto cl_tree_0;			
+
+#include "GH_Spaghetti_FREQ_fingerprints-hamlet-3dpes-xdocs-tobacco800-mirflickr-medical_center_line_forest_code.inc.h"
+
+	}
+
+	img = out;
+
+#undef CONDITION_P1
+#undef CONDITION_P2
+#undef CONDITION_P3
+#undef CONDITION_P4
+#undef CONDITION_P5
+#undef CONDITION_P6
+#undef CONDITION_P7
+#undef CONDITION_P8
+#undef CONDITION_P9
+#undef CONDITION_ITER
+
+#undef ACTION_1
+#undef ACTION_2
+#undef ACTION_3
+
+	return modified;
+}

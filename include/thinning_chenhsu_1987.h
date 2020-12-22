@@ -41,10 +41,31 @@ public:
     PERFORM_THINNING_DT
 };
 
-class ChenHsuDrag : public Thinning {
+class ChenHsuSpaghetti : public Thinning {
 public:
     inline static bool thinning_iteration(cv::Mat1b& img, int iter);
     PERFORM_THINNING_DT
 };
+
+class ChenHsuSpaghetti_FREQ_All : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+class ChenHsuSpaghetti_FREQ_AllNoClassical : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+class ChenHsuSpaghetti_FREQ_Hamlet : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+using ChenHsuSpaghettiFreq = ChenHsuSpaghetti_FREQ_All;
+
 #endif // !THEBE_THINNING_CHENHSU_1897_H_
 

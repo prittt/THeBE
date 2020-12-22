@@ -156,11 +156,31 @@ public:
     PERFORM_THINNING_DT
 };
 
-class ZhangSuenDrag : public Thinning {
+class ZhangSuenSpaghetti : public Thinning {
 public:
     inline static bool thinning_iteration(cv::Mat1b& img, int iter);
     PERFORM_THINNING_DT
 };
+
+class ZhangSuenSpaghetti_FREQ_Hamlet : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+class ZhangSuenSpaghetti_FREQ_All : public Thinning {
+public:
+	inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+	PERFORM_THINNING_DT
+};
+
+class ZhangSuenSpaghetti_FREQ_AllNoClassical : public Thinning {
+public:
+	inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+	PERFORM_THINNING_DT
+};
+
+using ZhangSuenSpaghettiFreq = ZhangSuenSpaghetti_FREQ_All;
 
 #endif // !THEBE_THINNING_ZHANGSUEN_H_
 

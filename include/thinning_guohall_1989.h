@@ -41,11 +41,32 @@ public:
     PERFORM_THINNING_DT
 };
 
-class GuoHallDrag : public Thinning {
+class GuoHallSpaghetti : public Thinning {
 public:
     inline static bool thinning_iteration(cv::Mat1b& img, int iter);
     PERFORM_THINNING_DT
 };
+
+class GuoHallSpaghetti_FREQ_Hamlet : public Thinning {
+public:
+    inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+    PERFORM_THINNING_DT
+};
+
+class GuoHallSpaghetti_FREQ_All : public Thinning {
+public:
+	inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+	PERFORM_THINNING_DT
+};
+
+class GuoHallSpaghetti_FREQ_AllNoClassical : public Thinning {
+public:
+	inline static bool thinning_iteration(cv::Mat1b& img, int iter);
+	PERFORM_THINNING_DT
+};
+
+using GuoHallSpaghettiFreq = GuoHallSpaghetti_FREQ_All;
+
 
 #endif // !THEBE_THINNING_GUOHALL_1989_H_
 
