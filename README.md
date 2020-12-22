@@ -1,4 +1,46 @@
-# THeBE: The THinning evaluation BEnchmark &nbsp;&nbsp;&nbsp; [![Build Status](https://travis-ci.org/prittt/THeBE.svg?branch=master)](https://travis-ci.org/prittt/THeBE)
+# THeBE: The THinning evaluation BEnchmark
+<!-- [![release](https://img.shields.io/github/v/release/prittt/THeBE)](https://github.com/prittt/THeBE/releases/latest/) -->
+[![license](https://img.shields.io/github/license/prittt/THeBE)](https://github.com/prittt/THeBE/blob/master/LICENSE)
+
+<table>
+<thead>
+<tr>
+    <th>OS</th>
+    <th>Build</th>
+    <th>Compiler</th>
+    <th>OpenCV</th>
+    <th>CMake</th>
+    <!--<th width="200px">Travis CI</th>-->
+    <th width="200px">GitHub Actions</th>
+</tr>
+<thead>
+<tbody>
+<tr>
+    <td align="center">Ubuntu<br/>16.04 LTS</td>
+    <td align="center">x32</td>
+    <td align="center">gcc 5.4.0</td>
+    <td align="center">3.0.0</td>
+    <td align="center">3.13.5</td>
+    <td align="center"><a href="https://github.com/prittt/THeBE/actions"><img src="https://github.com/prittt/THeBE/workflows/linux32/badge.svg?branch=master" alt="Build Status"/></a></td>
+</tr>
+<tr>
+    <td align="center">Ubuntu<br/>18.04 LTS</td>
+    <td align="center">x64</td>
+    <td align="center">gcc 9.3.0</td>
+    <td align="center">4.1.2</td>
+    <td align="center">3.13.5</td><td align="center"><a href="https://github.com/prittt/THeBE/actions"><img src="https://github.com/prittt/THeBE/workflows/linux64/badge.svg?branch=master" alt="Build Status"/></a></td>
+</tr>
+<tr>
+    <td align="center">MacOS<br/>(Darwin 19.6.0)</td>
+    <td align="center">x64</td>
+    <td align="center">AppleClang 12.0.0<br/>(Xcode-12)</td>
+    <td align="center">3.1.0</td>
+    <td align="center">3.13.0</td>
+    <td align="center"><a href="https://github.com/prittt/THeBE/actions"><img src="https://github.com/prittt/THeBE/workflows/macos/badge.svg?branch=master" alt="Build Status"/></a></td>
+</tr>
+</tbody>
+</table>
+
 
 <!--
 <p align="justify">Please include the following reference when citing the THeBE project/dataset:</p>
