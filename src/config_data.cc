@@ -7,7 +7,6 @@
 #include "config_data.h"
 
 #include <algorithm>
-#include <cctype>
 
 #include "system_info.h"
 #include "utilities.h"
@@ -86,7 +85,7 @@ void ConfigData::ReadAlgorithms(const FileStorage& fs) {
 
     for (const auto& a : algos) {
         string algo_str(a);
-        algo_str.erase(std::remove_if(algo_str.begin(), algo_str.end(), std::isblank), algo_str.end());
+        algo_str.erase(remove_if(algo_str.begin(), algo_str.end(), ::isblank), algo_str.end());
 
         AlgorithmNames alg_tmp;
         size_t comma_pos = algo_str.find(",");
