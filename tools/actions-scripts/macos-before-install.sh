@@ -89,10 +89,7 @@ if [ -d input -a "$(ls -A input/)" ]; then
 else
     echo -e "    THeBE dataset not cached, downloading it..."
     wget https://imagelab.ing.unimore.it/files/THeBE_dataset_reduced.zip -O dataset.zip 
-    unzip -qq dataset.zip 
-    rm dataset.zip  
-    wget imagelab.ing.unimore.it/files/THeBE_dataset_reduced.zip -O dataset.zip
-    unzip -qq dataset.zip
+    unzip -qq dataset.zip -d input/
     rm dataset.zip  
     echo -e "------------------------------------------> DONE!"
 fi
