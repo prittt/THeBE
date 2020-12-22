@@ -49,7 +49,7 @@
 -->
 
 <p align="justify">
-THeBE is an open source <i>C++</i> project that allows to compare thinning algorithms, highlighting strengths and weaknesses of different strategies available in literature.
+THeBE is an open source <i>C++</i> benchmarking framework, developed using <a href="https://github.com/prittt/YACCLAB">YACCLAB</a> <a href="https://github.com/prittt/YACCLAB/releases/tag/v2.0">v2.0</a> as a starting point. It allows to compare thinning algorithms, highlighting strengths and weaknesses of different strategies available in literature.
 </p>
 
 ## Requirements
@@ -76,6 +76,17 @@ Notes for gnuplot:
 - <p align="justify">Set the <a href="#conf">configuration file (config.yaml)</a> placed in the installation folder (bin in this example) in order to select desired tests.</p>
 
 - <p align="justify">Open the project, compile and run it: the work is done!</p>
+
+
+### CMake Configuration Variables
+
+| Name                                 | Meaning                     | Default | 
+| ------------------------------------ |-----------------------------| --------|
+| `THEBE_DOWNLOAD_DATASET`             | whether to automatically download the THeBE dataset or not  | `OFF` |
+| `THEBE_INPUT_DATASET_PATH`           | path to the `input` dataset folder, where to find test datasets  | `${CMAKE_INSTALL_PREFIX}/input` |
+| `THEBE_OUTPUT_RESULTS_PATH`          | path to the `output` folder, where to save output results  | `${CMAKE_INSTALL_PREFIX}/output` |
+| `OpenCV_DIR`                         | OpenCV installation path    |  -      |
+
 
 
 <a name="conf"></a>
