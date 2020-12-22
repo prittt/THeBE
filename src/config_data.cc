@@ -7,6 +7,7 @@
 #include "config_data.h"
 
 #include <algorithm>
+#include <cctype>
 
 #include "system_info.h"
 #include "utilities.h"
