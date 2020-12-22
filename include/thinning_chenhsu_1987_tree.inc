@@ -3,6 +3,9 @@
 //
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
+//
+// The following code has been generated with GRAPHGEN:
+// https://github.com/prittt/GRAPHGEN
 
 		if (CONDITION_P1) {
 			if (CONDITION_P6) {

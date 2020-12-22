@@ -1,3 +1,11 @@
+// Copyright (c) 2020, the THeBE contributors, as
+// shown by the AUTHORS file. All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+//
+// The following code has been generated with GRAPHGEN:
+// https://github.com/prittt/GRAPHGEN
 
 CLT_0: if ((c+=1) >= w - 1) goto cl_break_0_0;
 		if (CP1) {
