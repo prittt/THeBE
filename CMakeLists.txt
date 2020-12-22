@@ -126,11 +126,11 @@ file(GLOB INCFILES ${INCFILES} "include/*.inc")
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS) #To suppress 'fopen' opencv warning/bug  
 # Set configuration file    
-#if(THEBE_IS_TRAVIS_CI)    
-#    configure_file("${CMAKE_SOURCE_DIR}/doc/config_travis.yaml" "${CMAKE_INSTALL_PREFIX}/config.yaml")
-#else()
+if(THEBE_IS_TRAVIS_CI)    
+    configure_file("${CMAKE_SOURCE_DIR}/doc/config_travis.yaml" "${CMAKE_INSTALL_PREFIX}/config.yaml")
+else()
     configure_file("${CMAKE_SOURCE_DIR}/doc/config_base.yaml" "${CMAKE_INSTALL_PREFIX}/config.yaml")
-#endif()
+endif()
 source_group("Include Files" FILES ${INCFILES})
 source_group("Header Files" FILES ${HFILES})
 source_group("Source Files" FILES ${SRCFILES})
