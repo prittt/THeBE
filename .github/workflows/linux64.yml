@@ -1,0 +1,17 @@
+name: linux64
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    container:
+        image: docker://aimagelab/yacclab-test:linux64
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-m64" -DCMAKE_C_FLAGS="-m64" -DTHEBE_IS_TRAVIS_CI=ON -DTHEBE_DOWNLOAD_DATASET=OFF -DTHEBE_INPUT_DATASET_PATH=/builds/input ..
+    - name: build
+      run: cmake --build build --config Release
+    - name: run
+      run: cd build && ./THeBE
