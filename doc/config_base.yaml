@@ -20,8 +20,8 @@ correctness_tests:
   
 # Number of tests repetitions 
 tests_number: 
-  average:            1
-  average_with_steps: 1
+  average:            10
+  average_with_steps: 10
 
 # -------------------------------------------------------------------------------------
 # List of thinning algorithms to test
@@ -38,32 +38,34 @@ tests_number:
 #      that will be used to chech the correctness of the algorithm specified by the 
 #      "implementation_name"
 algorithms: 
-  - ZhangSuenNoPtrs , ZS_OpenCV ; ZhangSuenNoPtrs
-  - ZhangSuen       , ZS        ; ZhangSuenNoPtrs
-  - ZhangSuenLUT    , ZS_LUT    ; ZhangSuenNoPtrs
-  - ZhangSuenTree   , ZS_TREE   ; ZhangSuenNoPtrs
-  - ZhangSuenDrag   , ZS_DRAG   ; ZhangSuenNoPtrs
-  - GuoHall         , GH        ; GuoHall
-  - GuoHallLUT      , GH_LUT    ; GuoHall
-  - GuoHallTree     , GH_TREE   ; GuoHall
-  - GuoHallDrag     , GH_DRAG   ; GuoHall
-  - ChenHsu         , CH        ; ChenHsu
-  - ChenHsuLUT      , CH_LUT    ; ChenHsu
-  - ChenHsuTree     , CH_TREE   ; ChenHsu
-  - ChenHsuDrag     , CH_DRAG   ; ChenHsu
+  - GuoHall                    , GH                ; GuoHall
+  - GuoHallLUT                 , GH_LUT            ; GuoHall
+  - GuoHallTree                , GH_TREE           ; GuoHall
+  - GuoHallSpaghetti           , GH_Spaghetti      ; GuoHall
+  - GuoHallSpaghettiFreq       , GH_Spaghetti_FREQ ; GuoHall
+  - ZhangSuen                  , ZS(OpenCV)        ; ZhangSuenNoPtrs
+  - ZhangSuenLUT               , ZS_LUT            ; ZhangSuenNoPtrs
+  - ZhangSuenTree              , ZS_TREE           ; ZhangSuenNoPtrs
+  - ZhangSuenSpaghetti         , ZS_Spaghetti      ; ZhangSuenNoPtrs
+  - ZhangSuenSpaghettiFreq     , ZS_Spaghetti_FREQ ; ZhangSuenNoPtrs
+  - ChenHsu                    , CH                ; ChenHsu
+  - ChenHsuLUT                 , CH_LUT            ; ChenHsu
+  - ChenHsuTree                , CH_TREE           ; ChenHsu
+  - ChenHsuSpaghetti           , CH_Spaghetti      ; ChenHsu
+  - ChenHsuSpaghettiFreq       , CH_Spaghetti_FREQ ; ChenHsu
 
 # -------------------------------------------------------------------------------------
 # Datasets to use for each test
 # -------------------------------------------------------------------------------------
 
 # List of datasets on which "Correctness Tests" shall be run
-check_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
+check_datasets: ["fingerprints", "hamlet", "tobacco800"]
 
 # List of datasets on which "Average Runtime Tests" shall be run
-average_datasets: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
+average_datasets: ["fingerprints", "hamlet", "tobacco800"]
 
 # List of datasets on which "Average Runtime Tests With Steps" shall be run
-average_datasets_with_steps: ["fingerprints", "hamlet", "tobacco800", "xdocs"]
+average_datasets_with_steps: ["fingerprints", "hamlet", "tobacco800"]
 
 # -------------------------------------------------------------------------------------
 # Additional utilities
