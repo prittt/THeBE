@@ -17,7 +17,6 @@ perform:
 correctness_tests: 
   standard: true
   steps:    false
-  memory:   false
   
 # Number of tests repetitions 
 tests_number: 

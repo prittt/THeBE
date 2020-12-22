@@ -14,4 +14,4 @@ jobs:
     - name: build
       run: cmake --build build --config Release
     - name: run
-      run: cd build && ./THeBE
+      run: cd build && cat config.yaml && ./THeBE
