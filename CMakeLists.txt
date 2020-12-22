@@ -9,9 +9,6 @@ cmake_minimum_required(VERSION 3.0.0)
 set (ProjectName "THeBE")
 project (${ProjectName})
 
-#Suppress creation of ZERO_CHECK
-#set(CMAKE_SUPPRESS_REGENERATION true)
-
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configs" FORCE)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}" CACHE PATH "Install prefix" FORCE)
 
@@ -29,51 +26,9 @@ endif()
 #  Check for c++11 support
 # ----------------------------------------------------------------------------
 
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-
-if(DEFINED CMAKE_BUILD_TYPE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
-endif()
-
-message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang" OR CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
-    if(NOT CMAKE_CXX_FLAGS MATCHES "-m32" AND NOT CMAKE_CXX_FLAGS MATCHES "-m64")
-        set(CMAKE_CXX_FLAGS "-m32 ${CMAKE_CXX_FLAGS}" CACHE STRING "32-bit compiled" FORCE)
-    endif()
-    if(NOT CMAKE_C_FLAGS MATCHES "-m32" AND NOT CMAKE_C_FLAGS MATCHES "-m64")
-        set(CMAKE_C_FLAGS "-m32 ${CMAKE_C_FLAGS}" CACHE STRING "32-bit compiled" FORCE)
-    endif()
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-    if(COMPILER_SUPPORTS_CXX11 AND NOT CMAKE_CXX_FLAGS MATCHES "-std=c\\+\\+11")
-        set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}" CACHE STRING "Enable c++11" FORCE)
-    elseif(COMPILER_SUPPORTS_CXX0X AND NOT CMAKE_CXX_FLAGS MATCHES "-std=c\\+\\+11")
-        set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}" CACHE STRING "Enable c++11" FORCE)
-    elseif(NOT COMPILER_SUPPORTS_CXX11)
-        message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no complete C++11 support. Please use a different C++ compiler.")
-    endif()
-    # Set compilation flag to avoid creation of debug info in release configuration under Linux
-    #if(CMAKE_COMPILER_IS_GNUCC)
-    #    message(STATUS "Removed debug info in release mode")
-    #    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-    #    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
-    #endif()
-else()
-    if(MSVC)
-        if(MSVC_VERSION LESS 1800)
-            message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no complete C++11 support. Please use a different C++ compiler.")
-        endif()
-    else()
-        message(STATUS "We are not able to check if ${CMAKE_CXX_COMPILER} compiler has complete C++11 support. THeBE may not work properly.")
-    endif()
-endif()
-message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
-message(STATUS "C flags: ${CMAKE_C_FLAGS}")
-
+set(CMAKE_CXX_STANDARD_REQUIRED YES) # Force the following command to generate an error when it fails
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_EXTENSIONS NO)
 
 # ----------------------------------------------------------------------------
 #  Build & install layouts
