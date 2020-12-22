@@ -1,4 +1,4 @@
-# THeBE: The THinning evaluation BEnchmark &nbsp;&nbsp;&nbsp; [![Build Status](https://travis-ci.org/prittt/THeBE.svg?branch=master)](https://travis-ci.org/prittt/THeBE)
+# THeBE: The THinning evaluation BEnchmark
 <!-- [![release](https://img.shields.io/github/v/release/prittt/THeBE)](https://github.com/prittt/THeBE/releases/latest/) -->
 [![license](https://img.shields.io/github/license/prittt/THeBE)](https://github.com/prittt/THeBE/blob/master/LICENSE)
 
